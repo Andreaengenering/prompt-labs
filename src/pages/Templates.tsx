@@ -25,20 +25,9 @@ const Templates = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Security: Ensure user is authenticated before loading data
-  useEffect(() => {
-    if (!isAuthenticated) {
-      toast.error('Please sign in to access templates');
-    }
-  }, [isAuthenticated]);
-
   const { data: categories = [], error: categoriesError } = useQuery({
     queryKey: ['template-categories'],
     queryFn: async () => {
-      if (!isAuthenticated) {
-        throw new Error('Authentication required');
-      }
-
       const { data, error } = await supabase
         .from('template_categories')
         .select('*')
@@ -50,16 +39,12 @@ const Templates = () => {
       }
       return data;
     },
-    enabled: isAuthenticated
+    enabled: true // Always enabled now
   });
 
   const { data: templates = [], error: templatesError } = useQuery({
     queryKey: ['templates', selectedCategory, searchTerm],
     queryFn: async () => {
-      if (!isAuthenticated) {
-        throw new Error('Authentication required');
-      }
-
       let query = supabase
         .from('templates')
         .select(`
@@ -92,20 +77,15 @@ const Templates = () => {
         template.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     },
-    enabled: isAuthenticated && categories.length > 0
+    enabled: categories.length > 0 // Only depends on categories now
   });
 
-  // Security: Handle errors appropriately
+  // Handle errors appropriately
   useEffect(() => {
     if (categoriesError || templatesError) {
       const error = categoriesError || templatesError;
       console.error('Query error:', error);
-      
-      if (error?.message?.includes('JWT') || error?.message?.includes('auth')) {
-        toast.error('Session expired. Please sign in again.');
-      } else {
-        toast.error('Failed to load templates. Please try again.');
-      }
+      toast.error('Failed to load templates. Please try again.');
     }
   }, [categoriesError, templatesError]);
 
@@ -117,11 +97,6 @@ const Templates = () => {
       icon: iconMap[cat.icon] || BookOpen
     }))
   ];
-
-  // Security: Only render if authenticated
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <>
