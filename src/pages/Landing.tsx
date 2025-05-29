@@ -93,7 +93,7 @@ const Landing = () => {
     },
     {
       name: "Premium",
-      price: "$39.99/month",
+      price: "$19.00/month",
       description: "For growing businesses",
       features: [
         "Full Prompt Lab access",
@@ -109,7 +109,7 @@ const Landing = () => {
     },
     {
       name: "Pro Plus",
-      price: "$59.99/month", 
+      price: "$29.00/month", 
       description: "For scaling teams",
       features: [
         "All Premium features",
@@ -125,7 +125,7 @@ const Landing = () => {
     },
     {
       name: "Executive Pro",
-      price: "$79.99/month",
+      price: "$39.00/month",
       description: "For enterprise organizations", 
       features: [
         "All Pro Plus features",

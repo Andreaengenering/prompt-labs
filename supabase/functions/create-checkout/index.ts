@@ -50,11 +50,11 @@ serve(async (req) => {
       logStep("Existing customer found", { customerId });
     }
 
-    // Define pricing based on plan
+    // Updated pricing with new amounts
     const planPricing = {
-      premium: { amount: 3999, name: "Premium Plan" },
-      "pro-plus": { amount: 5999, name: "Pro Plus Plan" },
-      "executive-pro": { amount: 7999, name: "Executive Pro Plan" }
+      premium: { amount: 1900, name: "Premium Plan" },
+      "pro-plus": { amount: 2900, name: "Pro Plus Plan" },
+      "executive-pro": { amount: 3900, name: "Executive Pro Plan" }
     };
 
     const selectedPlan = planPricing[plan as keyof typeof planPricing];
