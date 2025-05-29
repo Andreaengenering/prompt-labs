@@ -1,6 +1,4 @@
-
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,13 +11,6 @@ import {
 
 const Analytics = () => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -27,10 +18,6 @@ const Analytics = () => {
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
       </div>
     );
-  }
-
-  if (!user) {
-    return null;
   }
 
   const performanceData = [
@@ -102,6 +89,11 @@ const Analytics = () => {
             <p className="text-lg text-gray-600">
               Analyze your content performance across all platforms
             </p>
+            {user && (
+              <p className="text-xs text-gray-500 mt-1">
+                Secure access for {user.email}
+              </p>
+            )}
           </div>
 
           {/* Overview Stats */}
