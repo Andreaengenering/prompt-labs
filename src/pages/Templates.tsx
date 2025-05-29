@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,6 +8,7 @@ import { TemplateSearch } from '@/components/templates/TemplateSearch';
 import { CategoryTabs } from '@/components/templates/CategoryTabs';
 import { TemplateGrid } from '@/components/templates/TemplateGrid';
 import { Zap, BookOpen, Briefcase, Megaphone, TrendingUp, Users, Play, ShoppingCart } from 'lucide-react';
+import { toast } from 'sonner';
 
 const iconMap: { [key: string]: any } = {
   Briefcase,
@@ -21,45 +21,45 @@ const iconMap: { [key: string]: any } = {
 };
 
 const Templates = () => {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  // Security: Ensure user is authenticated before loading data
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
+    if (!isAuthenticated) {
+      toast.error('Please sign in to access templates');
     }
-  }, [user, loading, navigate]);
+  }, [isAuthenticated]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
-
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], error: categoriesError } = useQuery({
     queryKey: ['template-categories'],
     queryFn: async () => {
+      if (!isAuthenticated) {
+        throw new Error('Authentication required');
+      }
+
       const { data, error } = await supabase
         .from('template_categories')
         .select('*')
         .order('name');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Categories fetch error:', error);
+        throw error;
+      }
       return data;
-    }
+    },
+    enabled: isAuthenticated
   });
 
-  const { data: templates = [] } = useQuery({
+  const { data: templates = [], error: templatesError } = useQuery({
     queryKey: ['templates', selectedCategory, searchTerm],
     queryFn: async () => {
+      if (!isAuthenticated) {
+        throw new Error('Authentication required');
+      }
+
       let query = supabase
         .from('templates')
         .select(`
@@ -80,7 +80,10 @@ const Templates = () => {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        console.error('Templates fetch error:', error);
+        throw error;
+      }
       
       return data.filter(template => 
         searchTerm === '' || 
@@ -89,8 +92,22 @@ const Templates = () => {
         template.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     },
-    enabled: categories.length > 0
+    enabled: isAuthenticated && categories.length > 0
   });
+
+  // Security: Handle errors appropriately
+  useEffect(() => {
+    if (categoriesError || templatesError) {
+      const error = categoriesError || templatesError;
+      console.error('Query error:', error);
+      
+      if (error?.message?.includes('JWT') || error?.message?.includes('auth')) {
+        toast.error('Session expired. Please sign in again.');
+      } else {
+        toast.error('Failed to load templates. Please try again.');
+      }
+    }
+  }, [categoriesError, templatesError]);
 
   const categoryTabs = [
     { value: 'all', label: 'All Templates', icon: Zap },
@@ -100,6 +117,11 @@ const Templates = () => {
       icon: iconMap[cat.icon] || BookOpen
     }))
   ];
+
+  // Security: Only render if authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <>
@@ -116,6 +138,11 @@ const Templates = () => {
                 <p className="text-gray-600 mt-1">
                   Professional templates to master AI conversations
                 </p>
+                {user && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Secure access for {user.email}
+                  </p>
+                )}
               </div>
               
               <TemplateSearch 

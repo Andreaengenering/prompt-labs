@@ -1,29 +1,9 @@
+
 import Navigation from '@/components/Navigation';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
+  const { user } = useAuth();
 
   return (
     <>
@@ -35,10 +15,15 @@ const Dashboard = () => {
             <div className="max-w-md mx-auto">
               <div>
                 <h1 className="text-2xl font-semibold">Welcome to your Dashboard!</h1>
+                {user && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Signed in as: {user.email}
+                  </p>
+                )}
               </div>
               <div className="divide-y divide-gray-200">
                 <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                  <p>This is your personal dashboard. You can access various tools and settings from here.</p>
+                  <p>This is your secure personal dashboard. You can access various tools and settings from here.</p>
                   <ul className="list-disc space-y-2">
                     <li>Explore the Prompt Lab to create and refine your AI prompts.</li>
                     <li>Check out the Templates section for pre-built prompt templates.</li>
