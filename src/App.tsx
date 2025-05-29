@@ -45,7 +45,7 @@ const App = () => (
               <Route 
                 path="/dashboard" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAuth={true}>
                     <Dashboard />
                   </ProtectedRoute>
                 } 
@@ -53,7 +53,7 @@ const App = () => (
               <Route 
                 path="/prompt-lab" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAuth={true}>
                     <PromptLab />
                   </ProtectedRoute>
                 } 
@@ -61,7 +61,7 @@ const App = () => (
               <Route 
                 path="/templates" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAuth={true}>
                     <Templates />
                   </ProtectedRoute>
                 } 
@@ -69,7 +69,7 @@ const App = () => (
               <Route 
                 path="/analytics" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAuth={true}>
                     <Analytics />
                   </ProtectedRoute>
                 } 
@@ -77,7 +77,7 @@ const App = () => (
               <Route 
                 path="/integrations" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAuth={true}>
                     <Integrations />
                   </ProtectedRoute>
                 } 
