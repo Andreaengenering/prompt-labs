@@ -1,102 +1,173 @@
 
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { 
-  Code, BookOpen, Users, MessageSquare, Sparkles, 
-  Menu, X, Home, Settings, User 
+import { useAuth } from '@/hooks/useAuth';
+import {
+  Zap, BookOpen, Bot, User, LogOut, Menu, X,
+  Star, Settings, HelpCircle, Crown
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 const Navigation = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navigationItems = [
-    { href: '/', icon: Home, label: 'Home' },
-    { href: '/prompt-lab', icon: Code, label: 'Prompt Lab' },
-    { href: '/templates', icon: BookOpen, label: 'Templates' },
-    { href: '/enhancer', icon: MessageSquare, label: 'Enhancer' },
-    { href: '/community', icon: Users, label: 'Community' },
+  const navItems = [
+    { path: '/', label: 'Dashboard', icon: Zap },
+    { path: '/prompt-lab', label: 'Prompt Lab', icon: Bot },
+    { path: '/templates', label: 'Templates', icon: BookOpen },
   ];
 
+  const isActive = (path: string) => location.pathname === path;
+
+  if (!user) {
+    return (
+      <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-2 rounded-lg">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                PromptCraft
+              </span>
+            </Link>
+            <Link to="/auth">
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                Get Started
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
-    <nav className="bg-white/80 backdrop-blur-sm border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <Sparkles className="h-8 w-8 text-purple-600" />
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-2 rounded-lg">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
             <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               PromptCraft
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.href}
-                variant="ghost"
-                className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50"
-                asChild
-              >
-                <a href={item.href}>
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </a>
-              </Button>
-            ))}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link key={item.path} to={item.path}>
+                  <Button
+                    variant={isActive(item.path) ? "default" : "ghost"}
+                    className={`flex items-center space-x-2 ${
+                      isActive(item.path) 
+                        ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white" 
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.label}</span>
+                  </Button>
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost">
-              <User className="h-4 w-4 mr-2" />
-              Sign In
-            </Button>
-            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-              Get Started
+          {/* User Menu */}
+          <div className="flex items-center space-x-2">
+            <Badge variant="secondary" className="hidden md:flex items-center space-x-1">
+              <Crown className="h-3 w-3" />
+              <span>Free</span>
+            </Badge>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-1 rounded-full">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="hidden md:block">{user.email}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem>
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Star className="h-4 w-4 mr-2" />
+                  My Prompts
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Help
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </Button>
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t bg-white/95 backdrop-blur-sm">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigationItems.map((item) => (
-                <Button
-                  key={item.href}
-                  variant="ghost"
-                  className="w-full justify-start text-gray-600 hover:text-purple-600 hover:bg-purple-50"
-                  asChild
-                >
-                  <a href={item.href} className="flex items-center space-x-2">
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                  </a>
-                </Button>
-              ))}
-              <div className="pt-4 space-y-2">
-                <Button variant="outline" className="w-full">
-                  Sign In
-                </Button>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600">
-                  Get Started
-                </Button>
-              </div>
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 border-t">
+            <div className="flex flex-col space-y-2 pt-4">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link 
+                    key={item.path} 
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant={isActive(item.path) ? "default" : "ghost"}
+                      className={`w-full justify-start ${
+                        isActive(item.path) 
+                          ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white" 
+                          : ""
+                      }`}
+                    >
+                      <Icon className="h-4 w-4 mr-2" />
+                      {item.label}
+                    </Button>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

@@ -9,7 +9,181 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          subscription_tier: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          subscription_tier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          subscription_tier?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      prompts: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          id: string
+          is_favorite: boolean | null
+          is_public: boolean | null
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          is_public?: boolean | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          is_public?: boolean | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      template_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      templates: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string
+          difficulty_level: string | null
+          id: string
+          is_premium: boolean | null
+          prompt_template: string
+          rating: number | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description: string
+          difficulty_level?: string | null
+          id?: string
+          is_premium?: boolean | null
+          prompt_template: string
+          rating?: number | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string
+          difficulty_level?: string | null
+          id?: string
+          is_premium?: boolean | null
+          prompt_template?: string
+          rating?: number | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "templates_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "template_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_template_usage: {
+        Row: {
+          id: string
+          template_id: string | null
+          used_at: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          template_id?: string | null
+          used_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          template_id?: string | null
+          used_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_template_usage_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
