@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Search, Star, Heart, Crown, Zap, Copy,
+import { useAuth } from '@/hooks/useAuth';
+import Navigation from '@/components/Navigation';
+import { Search, Star, Heart, Crown, Zap, Copy,
   Briefcase, Megaphone, BookOpen, TrendingUp, 
   Users, Play, ShoppingCart
 } from 'lucide-react';
@@ -26,6 +27,27 @@ const iconMap: { [key: string]: any } = {
 };
 
 const Templates = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const { toast } = useToast();
@@ -209,81 +231,84 @@ const Templates = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <div className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Prompt Templates
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Professional templates to master AI conversations
-              </p>
-            </div>
-            
-            <div className="relative max-w-md w-full md:w-auto">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search templates..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        {/* Header */}
+        <div className="border-b bg-white/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Prompt Templates
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Professional templates to master AI conversations
+                </p>
+              </div>
+              
+              <div className="relative max-w-md w-full md:w-auto">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search templates..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-          <div className="overflow-x-auto">
-            <TabsList className="inline-flex h-auto p-1 bg-white/50 backdrop-blur-sm">
-              {categoryTabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <TabsTrigger 
-                    key={tab.value} 
-                    value={tab.value}
-                    className="flex items-center space-x-2 whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          </div>
-
-          <TabsContent value={selectedCategory} className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">
-                {categoryTabs.find(tab => tab.value === selectedCategory)?.label}
-              </h2>
-              <Badge variant="secondary" className="hidden sm:flex">
-                {templates.length} templates
-              </Badge>
+        <div className="container mx-auto px-4 py-8">
+          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
+            <div className="overflow-x-auto">
+              <TabsList className="inline-flex h-auto p-1 bg-white/50 backdrop-blur-sm">
+                {categoryTabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <TabsTrigger 
+                      key={tab.value} 
+                      value={tab.value}
+                      className="flex items-center space-x-2 whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="hidden sm:inline">{tab.label}</span>
+                      <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
             </div>
-            
-            {templates.length === 0 ? (
-              <div className="text-center py-12">
-                <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-600 mb-2">No templates found</h3>
-                <p className="text-gray-500">Try adjusting your search or browse different categories.</p>
+
+            <TabsContent value={selectedCategory} className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">
+                  {categoryTabs.find(tab => tab.value === selectedCategory)?.label}
+                </h2>
+                <Badge variant="secondary" className="hidden sm:flex">
+                  {templates.length} templates
+                </Badge>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {templates.map((template) => (
-                  <TemplateCard key={template.id} template={template} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+              
+              {templates.length === 0 ? (
+                <div className="text-center py-12">
+                  <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-600 mb-2">No templates found</h3>
+                  <p className="text-gray-500">Try adjusting your search or browse different categories.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {templates.map((template) => (
+                    <TemplateCard key={template.id} template={template} />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
