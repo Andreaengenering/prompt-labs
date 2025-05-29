@@ -1,6 +1,4 @@
-
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,14 +14,7 @@ import {
 
 const Integrations = () => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -120,6 +111,11 @@ const Integrations = () => {
             <p className="text-lg text-gray-600">
               Connect your social media and websites for personalized content analysis
             </p>
+            {user && (
+              <p className="text-xs text-gray-500 mt-1">
+                Secure access for {user.email}
+              </p>
+            )}
           </div>
 
           {/* Stats Overview */}
