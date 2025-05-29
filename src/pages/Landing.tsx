@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Zap, Bot, BookOpen, Globe, BarChart3, Users, 
   Check, Star, ArrowRight, Sparkles, Shield, 
-  Rocket, Target, Brain, Lightbulb
+  Rocket, Target, Brain, Lightbulb, Crown
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -47,49 +47,61 @@ const Landing = () => {
     {
       name: "Free",
       price: "Free",
-      description: "Perfect for getting started",
+      description: "Explore core functionality",
       features: [
         "Access to basic Prompt Lab",
-        "View community prompts",
-        "Limited prompt saves (5)",
-        "2 free premium prompts",
-        "Basic templates"
+        "View community prompts", 
+        "Limited prompt saves",
+        "2 free premium prompts"
       ],
       cta: "Get Started Free",
-      popular: false
+      popular: false,
+      benefits: "Discover community content and explore core functionality"
     },
     {
       name: "Premium",
-      price: "$19/month",
-      description: "For serious prompt engineers",
+      price: "$39.99/month",
+      description: "Enhanced productivity",
       features: [
         "Full Prompt Lab access",
-        "Unlimited prompt saves",
-        "Ad-free experience",
+        "Unlimited saves",
+        "Ad-free experience", 
         "Priority access to new LLMs",
-        "All premium templates",
-        "Social media integrations",
-        "Content analytics",
-        "Priority support"
+        "10 premium prompts/month"
       ],
-      cta: "Start Premium Trial",
-      popular: true
+      cta: "Start Premium",
+      popular: true,
+      benefits: "Access to curated high-quality prompts and enhanced productivity"
     },
     {
-      name: "Pro",
-      price: "$49/month",
-      description: "For teams and businesses",
+      name: "Pro Plus",
+      price: "$59.99/month", 
+      description: "Professional optimization",
       features: [
-        "Everything in Premium",
-        "Team collaboration",
-        "Advanced analytics",
-        "Custom integrations",
-        "API access",
-        "White-label options",
-        "Dedicated support"
+        "All Premium features",
+        "Advanced A/B testing analytics",
+        "Custom prompt templates",
+        "Ability to sell prompts",
+        "50 premium prompts/month"
+      ],
+      cta: "Go Pro Plus",
+      popular: false,
+      benefits: "Monetization opportunities and deeper analytics"
+    },
+    {
+      name: "Executive Pro",
+      price: "$79.99/month",
+      description: "Scalable for organizations", 
+      features: [
+        "All Pro Plus features",
+        "Unlimited premium prompts",
+        "Tailored solutions",
+        "Comprehensive support",
+        "White-label options"
       ],
       cta: "Contact Sales",
-      popular: false
+      popular: false,
+      benefits: "Scalable for organizations with comprehensive support"
     }
   ];
 
@@ -107,12 +119,12 @@ const Landing = () => {
             </span>
           </div>
           <div className="flex items-center space-x-4">
-            <Link to="/auth">
-              <Button variant="outline">Sign In</Button>
+            <Link to="/dashboard">
+              <Button variant="outline">Try Dashboard</Button>
             </Link>
             <Link to="/auth">
               <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                Get Started
+                Sign In
               </Button>
             </Link>
           </div>
@@ -134,15 +146,17 @@ const Landing = () => {
             Transform your AI interactions with our guided prompt builder. Create, optimize, and scale your prompts with proven frameworks and real-time analytics.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth">
+            <Link to="/prompt-lab">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 Start Building Prompts
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline">
-              View Templates
-            </Button>
+            <Link to="/templates">
+              <Button size="lg" variant="outline">
+                View Templates
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -184,9 +198,9 @@ const Landing = () => {
             <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
             <p className="text-xl text-gray-600">Choose the plan that fits your needs</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {pricingPlans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.popular ? 'border-purple-600 border-2' : ''} hover:shadow-xl transition-shadow`}>
+              <Card key={index} className={`relative ${plan.popular ? 'border-purple-600 border-2 scale-105' : ''} hover:shadow-xl transition-all`}>
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <Badge className="bg-gradient-to-r from-purple-600 to-blue-600">
@@ -196,27 +210,33 @@ const Landing = () => {
                   </div>
                 )}
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div className="text-4xl font-bold text-purple-600 mb-2">{plan.price}</div>
-                  <CardDescription>{plan.description}</CardDescription>
+                  {plan.name === "Executive Pro" && (
+                    <Crown className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                  )}
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">{plan.price}</div>
+                  <CardDescription className="text-sm">{plan.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <ul className="space-y-3">
+                  <ul className="space-y-2">
                     {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center">
-                        <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                      <li key={featureIndex} className="flex items-start text-sm">
+                        <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
-                  <Link to="/auth" className="block">
-                    <Button 
-                      className={`w-full ${plan.popular ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700' : ''}`}
-                      variant={plan.popular ? "default" : "outline"}
-                    >
-                      {plan.cta}
-                    </Button>
-                  </Link>
+                  <div className="pt-2">
+                    <p className="text-xs text-gray-600 mb-4">{plan.benefits}</p>
+                    <Link to="/auth" className="block">
+                      <Button 
+                        className={`w-full text-sm ${plan.popular ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700' : ''}`}
+                        variant={plan.popular ? "default" : "outline"}
+                      >
+                        {plan.cta}
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -231,7 +251,7 @@ const Landing = () => {
           <p className="text-xl mb-8 opacity-90">
             Join thousands of professionals already using Prompt Labs to create better AI interactions
           </p>
-          <Link to="/auth">
+          <Link to="/prompt-lab">
             <Button size="lg" variant="secondary" className="bg-white text-purple-600 hover:bg-gray-100">
               Start Your Free Trial
               <Rocket className="ml-2 h-4 w-4" />
@@ -256,10 +276,10 @@ const Landing = () => {
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Features</li>
-                <li>Templates</li>
-                <li>Integrations</li>
-                <li>API</li>
+                <li><Link to="/prompt-lab" className="hover:text-white">Prompt Lab</Link></li>
+                <li><Link to="/templates" className="hover:text-white">Templates</Link></li>
+                <li><Link to="/integrations" className="hover:text-white">Integrations</Link></li>
+                <li><Link to="/analytics" className="hover:text-white">Analytics</Link></li>
               </ul>
             </div>
             <div>
