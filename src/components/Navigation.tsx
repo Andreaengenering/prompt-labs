@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import {
   Zap, BookOpen, Bot, User, LogOut, Menu, X,
-  Star, Settings, HelpCircle, Crown
+  Star, Settings, HelpCircle, Crown, Globe, BarChart3
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -23,8 +23,10 @@ const Navigation = () => {
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: Zap },
-    { path: '/prompt-lab', label: 'Prompt Lab', icon: Bot },
+    { path: '/prompt-lab', label: 'Prompt Builder', icon: Bot },
     { path: '/templates', label: 'Templates', icon: BookOpen },
+    { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/integrations', label: 'Integrations', icon: Globe },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -39,7 +41,7 @@ const Navigation = () => {
                 <Zap className="h-6 w-6 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                PromptCraft
+                Prompt Labs
               </span>
             </Link>
             <Link to="/auth">
@@ -63,7 +65,7 @@ const Navigation = () => {
               <Zap className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              PromptCraft
+              Prompt Labs
             </span>
           </Link>
 
