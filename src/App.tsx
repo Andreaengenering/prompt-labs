@@ -45,7 +45,7 @@ const App = () => (
               <Route 
                 path="/dashboard" 
                 element={
-                  <ProtectedRoute showSignInPrompt>
+                  <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
                 } 
@@ -53,7 +53,7 @@ const App = () => (
               <Route 
                 path="/prompt-lab" 
                 element={
-                  <ProtectedRoute showSignInPrompt>
+                  <ProtectedRoute>
                     <PromptLab />
                   </ProtectedRoute>
                 } 
@@ -61,7 +61,7 @@ const App = () => (
               <Route 
                 path="/templates" 
                 element={
-                  <ProtectedRoute showSignInPrompt>
+                  <ProtectedRoute>
                     <Templates />
                   </ProtectedRoute>
                 } 
@@ -69,7 +69,7 @@ const App = () => (
               <Route 
                 path="/analytics" 
                 element={
-                  <ProtectedRoute showSignInPrompt>
+                  <ProtectedRoute>
                     <Analytics />
                   </ProtectedRoute>
                 } 
@@ -77,7 +77,7 @@ const App = () => (
               <Route 
                 path="/integrations" 
                 element={
-                  <ProtectedRoute showSignInPrompt>
+                  <ProtectedRoute>
                     <Integrations />
                   </ProtectedRoute>
                 } 

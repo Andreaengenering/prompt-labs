@@ -14,7 +14,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ 
   children, 
   showSignInPrompt = false, 
-  requireAuth = true 
+  requireAuth = false // Changed default to false so you can explore the app
 }: ProtectedRouteProps) => {
   const { user, loading, session } = useAuth();
 
@@ -36,7 +36,7 @@ const ProtectedRoute = ({
     );
   }
 
-  // Security: Strict authentication check with session validation
+  // Security: Strict authentication check with session validation - but only if required
   if (requireAuth && (!user || !session)) {
     if (showSignInPrompt) {
       return (
