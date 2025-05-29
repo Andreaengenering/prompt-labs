@@ -1,6 +1,8 @@
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { Zap, BookOpen, Briefcase, Megaphone, TrendingUp, Users, Play, ShoppingCart } from 'lucide-react';
+import { TemplateCard } from './TemplateCard';
 
 const iconMap: { [key: string]: any } = {
   Briefcase,
@@ -16,9 +18,10 @@ interface CategoryTabsProps {
   categories: any[];
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
+  templates: any[];
 }
 
-export const CategoryTabs = ({ categories, selectedCategory, onCategoryChange }: CategoryTabsProps) => {
+export const CategoryTabs = ({ categories, selectedCategory, onCategoryChange, templates }: CategoryTabsProps) => {
   const categoryTabs = [
     { value: 'all', label: 'All Templates', icon: Zap },
     ...categories.map(cat => ({
@@ -48,6 +51,31 @@ export const CategoryTabs = ({ categories, selectedCategory, onCategoryChange }:
           })}
         </TabsList>
       </div>
+
+      {categoryTabs.map((tab) => (
+        <TabsContent key={tab.value} value={tab.value} className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">{tab.label}</h2>
+            <Badge variant="secondary" className="hidden sm:flex">
+              {templates.length} templates
+            </Badge>
+          </div>
+          
+          {templates.length === 0 ? (
+            <div className="text-center py-12">
+              <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No templates found</h3>
+              <p className="text-gray-500">Try adjusting your search or browse different categories.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templates.map((template) => (
+                <TemplateCard key={template.id} template={template} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      ))}
     </Tabs>
   );
 };

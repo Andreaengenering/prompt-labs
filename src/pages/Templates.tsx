@@ -6,22 +6,10 @@ import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
 import { TemplateSearch } from '@/components/templates/TemplateSearch';
 import { CategoryTabs } from '@/components/templates/CategoryTabs';
-import { TemplateGrid } from '@/components/templates/TemplateGrid';
-import { Zap, BookOpen, Briefcase, Megaphone, TrendingUp, Users, Play, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 
-const iconMap: { [key: string]: any } = {
-  Briefcase,
-  Megaphone,
-  BookOpen,
-  TrendingUp,
-  Users,
-  Play,
-  ShoppingCart
-};
-
 const Templates = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -39,7 +27,7 @@ const Templates = () => {
       }
       return data;
     },
-    enabled: true // Always enabled now
+    enabled: true
   });
 
   const { data: templates = [], error: templatesError } = useQuery({
@@ -77,10 +65,9 @@ const Templates = () => {
         template.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     },
-    enabled: categories.length > 0 // Only depends on categories now
+    enabled: categories.length > 0
   });
 
-  // Handle errors appropriately
   useEffect(() => {
     if (categoriesError || templatesError) {
       const error = categoriesError || templatesError;
@@ -88,15 +75,6 @@ const Templates = () => {
       toast.error('Failed to load templates. Please try again.');
     }
   }, [categoriesError, templatesError]);
-
-  const categoryTabs = [
-    { value: 'all', label: 'All Templates', icon: Zap },
-    ...categories.map(cat => ({
-      value: cat.name.toLowerCase().replace(/\s+/g, '-'),
-      label: cat.name,
-      icon: iconMap[cat.icon] || BookOpen
-    }))
-  ];
 
   return (
     <>
@@ -133,12 +111,7 @@ const Templates = () => {
             categories={categories}
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
-          />
-          
-          <TemplateGrid 
-            selectedCategory={selectedCategory}
             templates={templates}
-            categoryTabs={categoryTabs}
           />
         </div>
       </div>
