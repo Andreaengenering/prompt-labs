@@ -5,41 +5,74 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Zap, Bot, BookOpen, Globe, BarChart3, Users, 
   Check, Star, ArrowRight, Sparkles, Shield, 
-  Rocket, Target, Brain, Lightbulb, Crown
+  Rocket, Target, Brain, Lightbulb, Crown, AlertTriangle,
+  TrendingDown, Clock, DollarSign, Briefcase
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/hooks/useAuth';
 
 const Landing = () => {
+  const { createCheckout, loading } = useSubscription();
+  const { user } = useAuth();
+
+  const problemPoints = [
+    {
+      icon: TrendingDown,
+      title: "Inconsistent AI Results",
+      description: "Your team gets wildly different results from AI tools, wasting time and money on trial-and-error prompting.",
+      cost: "$2,000+/month in lost productivity"
+    },
+    {
+      icon: Clock,
+      title: "Time-Consuming Prompt Creation",
+      description: "Hours spent crafting the perfect prompt instead of focusing on your core business objectives.",
+      cost: "20+ hours/week per team member"
+    },
+    {
+      icon: DollarSign,
+      title: "Expensive AI Tool Subscriptions",
+      description: "Multiple AI subscriptions with poor ROI because you're not maximizing their potential.",
+      cost: "$500-2000+/month in underutilized tools"
+    },
+    {
+      icon: Briefcase,
+      title: "Competitive Disadvantage",
+      description: "Your competitors are scaling faster with optimized AI workflows while you're still figuring it out.",
+      cost: "Lost market share & opportunities"
+    }
+  ];
+
   const features = [
     {
       icon: Bot,
       title: "Guided Prompt Builder",
-      description: "AI-assisted prompt construction with role-playing, constraints, and examples"
+      description: "AI-assisted prompt construction with role-playing, constraints, and examples that guarantee better results"
     },
     {
       icon: BookOpen,
-      title: "Premium Templates",
-      description: "Professional templates for business, marketing, and content creation"
+      title: "Premium Business Templates",
+      description: "Proven templates for marketing, sales, customer service, and content creation that drive revenue"
     },
     {
       icon: Globe,
       title: "Social Media Integration",
-      description: "Connect Facebook, TikTok, YouTube, LinkedIn, Twitter, and Instagram"
+      description: "Connect all platforms and analyze your content to identify what's working and scale it"
     },
     {
       icon: BarChart3,
-      title: "Content Analytics",
-      description: "Analyze your existing website and social media content for optimization"
+      title: "ROI Analytics",
+      description: "Track exactly how much time and money you're saving with optimized prompts"
     },
     {
       icon: Brain,
       title: "Chain-of-Thought Prompting",
-      description: "Advanced reasoning techniques for better AI responses"
+      description: "Advanced reasoning techniques that make AI think like your best employee"
     },
     {
       icon: Target,
-      title: "Few-Shot Examples",
-      description: "Learn by example with proven prompt patterns"
+      title: "A/B Testing Framework",
+      description: "Test and optimize prompts to find what works best for your specific business needs"
     }
   ];
 
@@ -47,63 +80,75 @@ const Landing = () => {
     {
       name: "Free",
       price: "Free",
-      description: "Explore core functionality",
+      description: "Get started and see the difference",
       features: [
         "Access to basic Prompt Lab",
         "View community prompts", 
         "Limited prompt saves",
-        "2 free premium prompts"
+        "2 premium business templates"
       ],
-      cta: "Get Started Free",
+      cta: "Start Free",
       popular: false,
-      benefits: "Discover community content and explore core functionality"
+      benefits: "Perfect for testing our platform"
     },
     {
       name: "Premium",
       price: "$39.99/month",
-      description: "Enhanced productivity",
+      description: "For growing businesses",
       features: [
         "Full Prompt Lab access",
-        "Unlimited saves",
-        "Ad-free experience", 
-        "Priority access to new LLMs",
-        "10 premium prompts/month"
+        "Unlimited saves & templates",
+        "Priority AI model access", 
+        "ROI analytics dashboard",
+        "50 premium business templates/month"
       ],
       cta: "Start Premium",
       popular: true,
-      benefits: "Access to curated high-quality prompts and enhanced productivity"
+      benefits: "Save 20+ hours/week and $2000+/month in productivity",
+      plan: "premium"
     },
     {
       name: "Pro Plus",
       price: "$59.99/month", 
-      description: "Professional optimization",
+      description: "For scaling teams",
       features: [
         "All Premium features",
         "Advanced A/B testing analytics",
         "Custom prompt templates",
-        "Ability to sell prompts",
-        "50 premium prompts/month"
+        "Team collaboration tools",
+        "100 premium templates/month"
       ],
       cta: "Go Pro Plus",
       popular: false,
-      benefits: "Monetization opportunities and deeper analytics"
+      benefits: "Scale your team's AI efficiency across departments",
+      plan: "pro-plus"
     },
     {
       name: "Executive Pro",
       price: "$79.99/month",
-      description: "Scalable for organizations", 
+      description: "For enterprise organizations", 
       features: [
         "All Pro Plus features",
-        "Unlimited premium prompts",
-        "Tailored solutions",
-        "Comprehensive support",
-        "White-label options"
+        "Unlimited premium templates",
+        "White-label solutions",
+        "Dedicated success manager",
+        "Custom integrations"
       ],
       cta: "Contact Sales",
       popular: false,
-      benefits: "Scalable for organizations with comprehensive support"
+      benefits: "Enterprise-grade AI optimization with full support",
+      plan: "executive-pro"
     }
   ];
+
+  const handlePlanSelect = async (plan: string) => {
+    if (!user) {
+      // Redirect to auth if not logged in
+      window.location.href = '/auth';
+      return;
+    }
+    await createCheckout(plan);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
@@ -124,7 +169,7 @@ const Landing = () => {
             </Link>
             <Link to="/auth">
               <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                Sign In
+                {user ? 'Dashboard' : 'Sign In'}
               </Button>
             </Link>
           </div>
@@ -135,38 +180,77 @@ const Landing = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
           <Badge variant="secondary" className="mb-4">
-            <Sparkles className="h-4 w-4 mr-1" />
-            AI-Powered Prompt Engineering
+            <AlertTriangle className="h-4 w-4 mr-1 text-red-500" />
+            Stop Wasting Money on Ineffective AI
           </Badge>
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6">
-            Master AI with
-            <br />Perfect Prompts
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            Your Business Is
+            <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent block">
+              Bleeding Money
+            </span>
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              on Bad AI Prompts
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Transform your AI interactions with our guided prompt builder. Create, optimize, and scale your prompts with proven frameworks and real-time analytics.
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Every day your team struggles with AI is costing you thousands in lost productivity, poor results, and competitive disadvantage. 
+            <strong className="text-red-600"> Stop the bleeding.</strong> Start scaling with AI that actually works.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/prompt-lab">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                Start Building Prompts
+              <Button size="lg" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+                Stop Losing Money - Start Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link to="/templates">
-              <Button size="lg" variant="outline">
-                View Templates
-              </Button>
-            </Link>
+            <Button size="lg" variant="outline" onClick={() => document.getElementById('problems')?.scrollIntoView()}>
+              See What You're Losing
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Problem Points Section */}
+      <section id="problems" className="py-20 px-4 bg-red-50/50">
+        <div className="container mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4 text-red-900">
+              The Hidden Costs of Poor AI Prompting
+            </h2>
+            <p className="text-xl text-red-700">These problems are costing your business more than you realize</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {problemPoints.map((problem, index) => {
+              const Icon = problem.icon;
+              return (
+                <Card key={index} className="border-red-200 hover:shadow-xl transition-shadow">
+                  <CardHeader>
+                    <div className="bg-red-100 p-3 rounded-lg w-fit">
+                      <Icon className="h-6 w-6 text-red-600" />
+                    </div>
+                    <CardTitle className="text-red-900">{problem.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-base mb-3">
+                      {problem.description}
+                    </CardDescription>
+                    <Badge variant="destructive" className="text-sm">
+                      Cost: {problem.cost}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
       <section className="py-20 px-4 bg-white/50">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Powerful Features</h2>
-            <p className="text-xl text-gray-600">Everything you need to master AI prompt engineering</p>
+            <h2 className="text-4xl font-bold mb-4">The Solution That Pays for Itself</h2>
+            <p className="text-xl text-gray-600">Transform your AI chaos into competitive advantage</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => {
@@ -195,8 +279,8 @@ const Landing = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-xl text-gray-600">Choose the plan that fits your needs</p>
+            <h2 className="text-4xl font-bold mb-4">Stop the Money Leak. Start Scaling.</h2>
+            <p className="text-xl text-gray-600">Choose the plan that will save you the most money</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {pricingPlans.map((plan, index) => (
@@ -228,14 +312,14 @@ const Landing = () => {
                   </ul>
                   <div className="pt-2">
                     <p className="text-xs text-gray-600 mb-4">{plan.benefits}</p>
-                    <Link to="/auth" className="block">
-                      <Button 
-                        className={`w-full text-sm ${plan.popular ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700' : ''}`}
-                        variant={plan.popular ? "default" : "outline"}
-                      >
-                        {plan.cta}
-                      </Button>
-                    </Link>
+                    <Button 
+                      className={`w-full text-sm ${plan.popular ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700' : ''}`}
+                      variant={plan.popular ? "default" : "outline"}
+                      onClick={() => plan.plan ? handlePlanSelect(plan.plan) : window.location.href = '/auth'}
+                      disabled={loading}
+                    >
+                      {loading ? 'Processing...' : plan.cta}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -244,16 +328,16 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+      {/* Urgency CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to Master AI Prompting?</h2>
+          <h2 className="text-4xl font-bold mb-4">Every Day You Wait Costs You More</h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands of professionals already using Prompt Labs to create better AI interactions
+            Your competitors are already scaling with AI. Don't let them leave you behind.
           </p>
           <Link to="/prompt-lab">
             <Button size="lg" variant="secondary" className="bg-white text-purple-600 hover:bg-gray-100">
-              Start Your Free Trial
+              Stop Losing Money - Start Free Now
               <Rocket className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -270,16 +354,16 @@ const Landing = () => {
                 <span className="text-xl font-bold">Prompt Labs</span>
               </div>
               <p className="text-gray-400">
-                The ultimate platform for AI prompt engineering and optimization.
+                Stop losing money on ineffective AI. Start scaling your business with prompts that actually work.
               </p>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/prompt-lab" className="hover:text-white">Prompt Lab</Link></li>
-                <li><Link to="/templates" className="hover:text-white">Templates</Link></li>
+                <li><Link to="/templates" className="hover:text-white">Business Templates</Link></li>
                 <li><Link to="/integrations" className="hover:text-white">Integrations</Link></li>
-                <li><Link to="/analytics" className="hover:text-white">Analytics</Link></li>
+                <li><Link to="/analytics" className="hover:text-white">ROI Analytics</Link></li>
               </ul>
             </div>
             <div>
@@ -287,7 +371,7 @@ const Landing = () => {
               <ul className="space-y-2 text-gray-400">
                 <li>About</li>
                 <li>Blog</li>
-                <li>Careers</li>
+                <li>Success Stories</li>
                 <li>Contact</li>
               </ul>
             </div>
@@ -297,12 +381,12 @@ const Landing = () => {
                 <li>Help Center</li>
                 <li>Documentation</li>
                 <li>Community</li>
-                <li>Status</li>
+                <li>ROI Calculator</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Prompt Labs. All rights reserved.</p>
+            <p>&copy; 2024 Prompt Labs. All rights reserved. Stop losing money on bad AI.</p>
           </div>
         </div>
       </footer>
