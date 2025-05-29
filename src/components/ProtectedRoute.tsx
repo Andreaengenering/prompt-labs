@@ -1,9 +1,8 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -14,9 +13,10 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ 
   children, 
   showSignInPrompt = false, 
-  requireAuth = false // Changed default to false so you can explore the app
+  requireAuth = false
 }: ProtectedRouteProps) => {
   const { user, loading, session } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Security: Log authentication attempts for monitoring
@@ -27,6 +27,15 @@ const ProtectedRoute = ({
       });
     }
   }, [user, loading, requireAuth]);
+
+  // Use React Router navigation instead of hard redirect
+  useEffect(() => {
+    if (requireAuth && !loading && (!user || !session)) {
+      if (!showSignInPrompt) {
+        navigate('/auth', { replace: true });
+      }
+    }
+  }, [user, session, loading, requireAuth, showSignInPrompt, navigate]);
 
   if (loading) {
     return (
@@ -56,8 +65,7 @@ const ProtectedRoute = ({
       );
     }
     
-    // Security: Silent redirect for non-prompt protected routes
-    window.location.href = '/auth';
+    // Return null while navigation is happening
     return null;
   }
 

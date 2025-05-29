@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,40 +20,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Security: Set up comprehensive auth state management
+    // Simplified auth state management
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
-        
-        // Security: Validate session integrity
-        if (session) {
-          try {
-            // Verify session is still valid by making a test query
-            const { error } = await supabase.from('profiles').select('id').limit(1);
-            if (error && error.message.includes('JWT')) {
-              console.warn('Invalid session detected, signing out');
-              await supabase.auth.signOut();
-              return;
-            }
-          } catch (error) {
-            console.warn('Session validation failed:', error);
-          }
-        }
         
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-
-        // Check subscription status when user signs in
-        if (event === 'SIGNED_IN' && session?.user) {
-          setTimeout(async () => {
-            try {
-              await supabase.functions.invoke('check-subscription');
-            } catch (error) {
-              console.log('Subscription check failed:', error);
-            }
-          }, 0);
-        }
 
         // Security: Log authentication events for monitoring
         if (event === 'SIGNED_IN') {
