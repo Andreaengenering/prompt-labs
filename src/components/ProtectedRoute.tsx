@@ -28,15 +28,6 @@ const ProtectedRoute = ({
     }
   }, [user, loading, requireAuth]);
 
-  // Use React Router navigation instead of hard redirect
-  useEffect(() => {
-    if (requireAuth && !loading && (!user || !session)) {
-      if (!showSignInPrompt) {
-        navigate('/auth', { replace: true });
-      }
-    }
-  }, [user, session, loading, requireAuth, showSignInPrompt, navigate]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -45,7 +36,7 @@ const ProtectedRoute = ({
     );
   }
 
-  // Security: Strict authentication check with session validation - but only if required
+  // Single authentication check - handle both redirect and UI in one place
   if (requireAuth && (!user || !session)) {
     if (showSignInPrompt) {
       return (
@@ -65,7 +56,8 @@ const ProtectedRoute = ({
       );
     }
     
-    // Return null while navigation is happening
+    // Navigate to auth page for routes that require authentication
+    navigate('/auth', { replace: true });
     return null;
   }
 
