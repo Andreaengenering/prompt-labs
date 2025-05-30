@@ -20,41 +20,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simplified auth state management
+    console.log('🔐 Setting up auth state listener...');
+    
+    // Single auth state management - let the listener handle everything
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+      async (event, session) => {
+        console.log('🔐 Auth state changed:', event, session?.user?.email);
         
+        // Update state immediately
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
         // Security: Log authentication events for monitoring
         if (event === 'SIGNED_IN') {
-          console.log('User signed in successfully', {
+          console.log('✅ User signed in successfully', {
             userId: session?.user?.id,
             timestamp: new Date().toISOString()
           });
         } else if (event === 'SIGNED_OUT') {
-          console.log('User signed out', {
+          console.log('👋 User signed out', {
             timestamp: new Date().toISOString()
           });
         }
       }
     );
 
-    // Get initial session with error handling
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('Error getting initial session:', error);
-        toast.error('Authentication error. Please sign in again.');
-      }
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Get initial session only once - don't call getSession separately
+    // The auth listener will handle the initial state
+    console.log('🔐 Auth provider initialized');
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('🔐 Cleaning up auth subscription');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
