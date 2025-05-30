@@ -19,17 +19,16 @@ const ProtectedRoute = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    // Security: Log authentication attempts for monitoring
-    if (!loading && requireAuth && !user) {
-      console.log('🚫 Unauthorized access attempt blocked', {
-        timestamp: new Date().toISOString(),
-        path: window.location.pathname
-      });
-    }
-  }, [user, loading, requireAuth]);
+  console.log('🛡️ ProtectedRoute render:', {
+    path: location.pathname,
+    loading,
+    user: user?.email || 'none',
+    session: !!session,
+    requireAuth,
+    showSignInPrompt
+  });
 
-  // Handle navigation only when auth state is resolved and not already on auth page
+  // Handle redirection for unauthenticated users
   useEffect(() => {
     if (!loading && requireAuth && (!user || !session) && !showSignInPrompt) {
       if (location.pathname !== '/auth') {
@@ -39,6 +38,17 @@ const ProtectedRoute = ({
     }
   }, [user, session, loading, requireAuth, showSignInPrompt, navigate, location.pathname]);
 
+  // Security: Log unauthorized access attempts
+  useEffect(() => {
+    if (!loading && requireAuth && !user) {
+      console.log('🚫 Unauthorized access attempt blocked', {
+        timestamp: new Date().toISOString(),
+        path: window.location.pathname
+      });
+    }
+  }, [user, loading, requireAuth]);
+
+  // Show loading spinner while auth state is being determined
   if (loading) {
     console.log('⏳ Auth loading...');
     return (
@@ -68,10 +78,9 @@ const ProtectedRoute = ({
     );
   }
 
-  // If auth is required but user is not authenticated, don't render anything
-  // (navigation will happen via useEffect)
+  // If auth is required but user is not authenticated, return null while navigation happens
   if (requireAuth && (!user || !session)) {
-    console.log('🔐 Auth required but user not authenticated, navigation handling...');
+    console.log('🔐 Auth required but user not authenticated, navigation will handle redirect...');
     return null;
   }
 

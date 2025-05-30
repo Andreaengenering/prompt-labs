@@ -20,14 +20,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🔐 Setting up auth state listener...');
+    console.log('🔐 Initializing auth provider...');
     
-    // Single auth state management - let the listener handle everything
+    // First, get the current session if it exists
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting initial session:', error);
+        } else {
+          console.log('📋 Initial session check:', session?.user?.email || 'No session');
+          setSession(session);
+          setUser(session?.user ?? null);
+        }
+      } catch (error) {
+        console.error('Unexpected error getting session:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('🔐 Auth state changed:', event, session?.user?.email);
+      (event, session) => {
+        console.log('🔐 Auth state changed:', event, session?.user?.email || 'No session');
         
-        // Update state immediately
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -46,9 +63,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     );
 
-    // Get initial session only once - don't call getSession separately
-    // The auth listener will handle the initial state
-    console.log('🔐 Auth provider initialized');
+    // Initialize auth state
+    initializeAuth();
 
     return () => {
       console.log('🔐 Cleaning up auth subscription');
