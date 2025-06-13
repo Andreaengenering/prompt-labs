@@ -15,6 +15,17 @@ interface PlatformCardProps {
 }
 
 export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }: PlatformCardProps) {
+  const getInputPlaceholder = () => {
+    switch (platform.id) {
+      case 'website':
+        return 'Enter your website URL';
+      case 'tiktok':
+        return 'Enter your TikTok username';
+      default:
+        return `Enter your ${platform.name} handle`;
+    }
+  };
+
   return (
     <Card className="gallery-card">
       <CardHeader>
@@ -52,6 +63,9 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
             <div className="space-y-2">
               <div className="text-xs text-muted-foreground">Last sync: 2 hours ago</div>
               <div className="text-xs text-muted-foreground">Content analyzed: 156 items</div>
+              {platform.id === 'tiktok' && (
+                <div className="text-xs text-red-400">Video insights available</div>
+              )}
             </div>
             <div className="flex space-x-2">
               <Button size="sm" variant="outline" className="flex-1 border-red-600/30 hover:bg-red-600/20">
@@ -69,8 +83,11 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
           </div>
         ) : (
           <div className="space-y-4">
-            {platform.id === 'website' && (
-              <Input placeholder="Enter your website URL" className="bg-card border-border" />
+            {(platform.id === 'website' || platform.id === 'tiktok') && (
+              <Input 
+                placeholder={getInputPlaceholder()} 
+                className="bg-card border-border" 
+              />
             )}
             <Button 
               className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"

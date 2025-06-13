@@ -5,6 +5,8 @@ import { AppLayout } from '@/components/AppLayout';
 import { StatsOverview } from '@/components/integrations/StatsOverview';
 import { PlatformCard } from '@/components/integrations/PlatformCard';
 import { ContentAnalysis } from '@/components/integrations/ContentAnalysis';
+import { KnowledgeBase } from '@/components/integrations/KnowledgeBase';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { platforms } from '@/constants/platforms';
 
 const Integrations = () => {
@@ -56,24 +58,37 @@ const Integrations = () => {
             )}
           </div>
 
-          {/* Stats Overview */}
-          <StatsOverview connectedPlatformsCount={connectedPlatforms.length} />
+          <Tabs defaultValue="integrations" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="integrations">Platform Integrations</TabsTrigger>
+              <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+            </TabsList>
 
-          {/* Platform Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {platforms.map((platform) => (
-              <PlatformCard
-                key={platform.id}
-                platform={platform}
-                isConnected={isConnected(platform.id)}
-                onConnect={handleConnect}
-                onDisconnect={handleDisconnect}
-              />
-            ))}
-          </div>
+            <TabsContent value="integrations" className="space-y-8">
+              {/* Stats Overview */}
+              <StatsOverview connectedPlatformsCount={connectedPlatforms.length} />
 
-          {/* Content Analysis Section */}
-          <ContentAnalysis connectedPlatformsCount={connectedPlatforms.length} />
+              {/* Platform Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {platforms.map((platform) => (
+                  <PlatformCard
+                    key={platform.id}
+                    platform={platform}
+                    isConnected={isConnected(platform.id)}
+                    onConnect={handleConnect}
+                    onDisconnect={handleDisconnect}
+                  />
+                ))}
+              </div>
+
+              {/* Content Analysis Section */}
+              <ContentAnalysis connectedPlatformsCount={connectedPlatforms.length} />
+            </TabsContent>
+
+            <TabsContent value="knowledge">
+              <KnowledgeBase />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </AppLayout>

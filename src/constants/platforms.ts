@@ -4,6 +4,7 @@ import {
   Twitter
 } from 'lucide-react';
 import { Platform } from '@/types/integrations';
+import { TikTokIcon } from '@/components/integrations/TikTokIcon';
 
 export const platforms: Platform[] = [
   {
@@ -23,6 +24,15 @@ export const platforms: Platform[] = [
     color: 'text-red-600',
     bgColor: 'bg-red-600/20',
     premium: false
+  },
+  {
+    id: 'tiktok',
+    name: 'TikTok',
+    icon: TikTokIcon,
+    description: 'Connect TikTok for video content insights',
+    color: 'text-foreground',
+    bgColor: 'bg-red-600/20',
+    premium: true
   },
   {
     id: 'facebook',
