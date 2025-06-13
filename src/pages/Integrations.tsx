@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { AppLayout } from '@/components/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import {
   Twitter, Link, CheckCircle, AlertCircle, Plus,
   BarChart3, TrendingUp, Users, Eye
 } from 'lucide-react';
-import { tiktok } from 'lucide-react/dynamicIconImports';
+import tiktok from 'lucide-react/dynamicIconImports/tiktok';
 import { Icon } from 'lucide-react';
 
 const Integrations = () => {
