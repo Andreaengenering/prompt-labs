@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { AppLayout } from '@/components/AppLayout';
@@ -11,8 +12,6 @@ import {
   Twitter, Link, CheckCircle, AlertCircle, Plus,
   BarChart3, TrendingUp, Users, Eye
 } from 'lucide-react';
-import tiktok from 'lucide-react/dynamicIconImports/tiktok';
-import { Icon } from 'lucide-react';
 
 const Integrations = () => {
   const { user, loading } = useAuth();
@@ -86,16 +85,6 @@ const Integrations = () => {
       color: 'text-foreground',
       bgColor: 'bg-red-600/20',
       premium: true
-    },
-    {
-      id: 'tiktok',
-      name: 'TikTok',
-      icon: 'tiktok',
-      description: 'Analyze TikTok videos and engagement metrics',
-      color: 'text-red-500',
-      bgColor: 'bg-red-600/20',
-      premium: true,
-      isDynamic: true
     }
   ];
 
@@ -193,11 +182,7 @@ const Integrations = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className={`p-3 rounded-lg ${platform.bgColor}`}>
-                          {platform.isDynamic ? (
-                            <Icon iconNode={tiktok} className={`h-6 w-6 ${platform.color}`} />
-                          ) : (
-                            React.createElement(platform.icon, { className: `h-6 w-6 ${platform.color}` })
-                          )}
+                          <platform.icon className={`h-6 w-6 ${platform.color}`} />
                         </div>
                         <div>
                           <CardTitle className="flex items-center space-x-2 text-foreground">
