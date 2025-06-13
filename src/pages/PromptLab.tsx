@@ -21,21 +21,21 @@ const PromptLab = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
       </div>
     );
   }
 
   const templateCategories = [
-    { id: 'all', name: 'All Templates', icon: Zap, color: '#8B5CF6' },
-    { id: 'business', name: 'Business Growth', icon: TrendingUp, color: '#059669' },
+    { id: 'all', name: 'All Templates', icon: Zap, color: '#DC2626' },
+    { id: 'business', name: 'Business Growth', icon: TrendingUp, color: '#DC2626' },
     { id: 'marketing', name: 'Marketing & Ads', icon: Megaphone, color: '#DC2626' },
-    { id: 'content', name: 'Content Creation', icon: BookOpen, color: '#2563EB' },
-    { id: 'social', name: 'Social Media', icon: Users, color: '#7C3AED' },
-    { id: 'sales', name: 'Sales & Leads', icon: Target, color: '#EA580C' },
-    { id: 'courses', name: 'Online Courses', icon: Play, color: '#0891B2' },
-    { id: 'ecommerce', name: 'E-commerce', icon: ShoppingCart, color: '#BE185D' }
+    { id: 'content', name: 'Content Creation', icon: BookOpen, color: '#DC2626' },
+    { id: 'social', name: 'Social Media', icon: Users, color: '#DC2626' },
+    { id: 'sales', name: 'Sales & Leads', icon: Target, color: '#DC2626' },
+    { id: 'courses', name: 'Online Courses', icon: Play, color: '#DC2626' },
+    { id: 'ecommerce', name: 'E-commerce', icon: ShoppingCart, color: '#DC2626' }
   ];
 
   const promptTemplates = [
@@ -328,40 +328,30 @@ const PromptLab = () => {
     const IconComponent = category?.icon || BookOpen;
     
     return (
-      <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-0 shadow-lg h-full flex flex-col">
+      <Card className="gallery-card h-full flex flex-col">
         <CardHeader className="pb-3 flex-shrink-0">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center space-x-2">
-              <div 
-                className="p-2 rounded-lg"
-                style={{ backgroundColor: `${category?.color}20` }}
-              >
-                <IconComponent 
-                  className="h-5 w-5"
-                  style={{ color: category?.color }}
-                />
+              <div className="p-2 rounded-lg bg-red-600/20">
+                <IconComponent className="h-5 w-5 text-red-400" />
               </div>
-              <Badge 
-                variant="outline"
-                className="text-xs"
-                style={{ borderColor: category?.color }}
-              >
+              <Badge variant="outline" className="text-xs border-red-600/30">
                 {template.difficulty}
               </Badge>
             </div>
             <div className="flex items-center space-x-1">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm text-gray-600">{template.rating}</span>
+              <Star className="h-4 w-4 fill-red-400 text-red-400" />
+              <span className="text-sm text-muted-foreground">{template.rating}</span>
             </div>
           </div>
           
-          <CardTitle className="text-lg mb-2 line-clamp-2">{template.title}</CardTitle>
+          <CardTitle className="text-lg mb-2 line-clamp-2 text-foreground">{template.title}</CardTitle>
           <CardDescription className="text-sm line-clamp-2">
             {template.description}
           </CardDescription>
           
           <div className="flex items-center space-x-3 pt-2">
-            <div className="flex items-center space-x-1 text-sm text-gray-600">
+            <div className="flex items-center space-x-1 text-sm text-muted-foreground">
               <Zap className="h-4 w-4" />
               <span>{template.usage} uses</span>
             </div>
@@ -369,8 +359,8 @@ const PromptLab = () => {
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col">
-          <div className="bg-gray-50 rounded-lg p-3 mb-4 flex-1">
-            <p className="text-sm font-mono text-gray-700 line-clamp-4">
+          <div className="bg-card/50 rounded-lg p-3 mb-4 flex-1 border border-border">
+            <p className="text-sm font-mono text-muted-foreground line-clamp-4">
               {template.prompt}
             </p>
           </div>
@@ -393,13 +383,13 @@ const PromptLab = () => {
           <div className="flex space-x-2 mt-auto">
             <Button 
               size="sm" 
-              className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
               onClick={() => handleUseTemplate(template)}
             >
               <Copy className="h-4 w-4 mr-1" />
               Use Template
             </Button>
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" className="border-red-600/30 hover:bg-red-600/20">
               <Heart className="h-4 w-4" />
             </Button>
           </div>
@@ -409,84 +399,80 @@ const PromptLab = () => {
   };
 
   return (
-    <>
-      <Navigation />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 py-8">
         {/* Header */}
-        <div className="border-b bg-white/80 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Prompt Lab
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Discover and use professional prompt templates for every business need
-                </p>
-              </div>
-              
-              <div className="relative max-w-md w-full md:w-auto">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search templates..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+            Prompt Lab
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Discover and use professional prompt templates for every business need
+          </p>
+        </div>
+
+        {/* Search */}
+        <div className="mb-8">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search templates..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-card border-border focus:border-red-500"
+            />
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8">
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-            <div className="overflow-x-auto">
-              <TabsList className="inline-flex h-auto p-1 bg-white/50 backdrop-blur-sm">
-                {templateCategories.map((category) => {
-                  const Icon = category.icon;
-                  return (
-                    <TabsTrigger 
-                      key={category.id} 
-                      value={category.id}
-                      className="flex items-center space-x-2 whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span className="hidden sm:inline">{category.name}</span>
-                      <span className="sm:hidden">{category.name.split(' ')[0]}</span>
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-            </div>
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
+          <div className="overflow-x-auto">
+            <TabsList className="inline-flex h-auto p-1 bg-card/50 backdrop-blur-sm">
+              {templateCategories.map((category) => {
+                const Icon = category.icon;
+                return (
+                  <TabsTrigger 
+                    key={category.id} 
+                    value={category.id}
+                    className="flex items-center space-x-2 whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600 data-[state=active]:to-red-500 data-[state=active]:text-white"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="hidden sm:inline">{category.name}</span>
+                    <span className="sm:hidden">{category.name.split(' ')[0]}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
 
-            <TabsContent value={selectedCategory} className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">
-                  {templateCategories.find(cat => cat.id === selectedCategory)?.name}
-                </h2>
-                <Badge variant="secondary" className="hidden sm:flex">
-                  {filteredTemplates.length} templates
-                </Badge>
+          <TabsContent value={selectedCategory} className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-foreground">
+                {templateCategories.find(cat => cat.id === selectedCategory)?.name}
+              </h2>
+              <Badge variant="secondary" className="hidden sm:flex">
+                {filteredTemplates.length} templates
+              </Badge>
+            </div>
+            
+            {filteredTemplates.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="bg-gradient-to-br from-red-900/20 to-black/40 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                  <BookOpen className="h-12 w-12 text-red-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No templates found</h3>
+                <p className="text-muted-foreground">Try adjusting your search or browse different categories.</p>
               </div>
-              
-              {filteredTemplates.length === 0 ? (
-                <div className="text-center py-12">
-                  <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-600 mb-2">No templates found</h3>
-                  <p className="text-gray-500">Try adjusting your search or browse different categories.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredTemplates.map((template) => (
-                    <TemplateCard key={template.id} template={template} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </div>
+            ) : (
+              <div className="gallery-grid">
+                {filteredTemplates.map((template) => (
+                  <TemplateCard key={template.id} template={template} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
-    </>
+    </div>
   );
 };
 

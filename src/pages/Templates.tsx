@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import Navigation from '@/components/Navigation';
 import { TemplateSearch } from '@/components/templates/TemplateSearch';
 import { CategoryTabs } from '@/components/templates/CategoryTabs';
 import { toast } from 'sonner';
@@ -77,45 +76,39 @@ const Templates = () => {
   }, [categoriesError, templatesError]);
 
   return (
-    <>
-      <Navigation />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 py-8">
         {/* Header */}
-        <div className="border-b bg-white/80 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Prompt Templates
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Professional templates to master AI conversations
-                </p>
-                {user && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Secure access for {user.email}
-                  </p>
-                )}
-              </div>
-              
-              <TemplateSearch 
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-              />
-            </div>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+            Prompt Templates
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Professional templates to master AI conversations
+          </p>
+          {user && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Secure access for {user.email}
+            </p>
+          )}
         </div>
 
-        <div className="container mx-auto px-4 py-8">
-          <CategoryTabs 
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            templates={templates}
+        {/* Search */}
+        <div className="mb-8">
+          <TemplateSearch 
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
           />
         </div>
+
+        <CategoryTabs 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          templates={templates}
+        />
       </div>
-    </>
+    </div>
   );
 };
 
