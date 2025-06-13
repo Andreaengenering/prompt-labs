@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +6,7 @@ import { SubscriptionStatus } from '@/components/SubscriptionStatus';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Zap, TrendingUp, Heart, Globe, Eye } from "lucide-react";
+import { Plus, FileText, Zap, TrendingUp, Heart, Globe, Eye, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from 'sonner';
 
