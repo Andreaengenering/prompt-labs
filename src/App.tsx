@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import SecurityBoundary from "@/components/SecurityBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { AppLayout } from "@/components/AppLayout";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import PromptLab from "./pages/PromptLab";
@@ -20,13 +21,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error: any) => {
-        // Security: Don't retry on auth errors
         if (error?.message?.includes('JWT') || error?.status === 401) {
           return false;
         }
         return failureCount < 3;
       },
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
     },
   },
 });
@@ -46,7 +46,9 @@ const App = () => (
                 path="/dashboard" 
                 element={
                   <ProtectedRoute requireAuth={true}>
-                    <Dashboard />
+                    <AppLayout>
+                      <Dashboard />
+                    </AppLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -54,7 +56,9 @@ const App = () => (
                 path="/prompt-lab" 
                 element={
                   <ProtectedRoute requireAuth={true}>
-                    <PromptLab />
+                    <AppLayout>
+                      <PromptLab />
+                    </AppLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -62,7 +66,9 @@ const App = () => (
                 path="/templates" 
                 element={
                   <ProtectedRoute requireAuth={true}>
-                    <Templates />
+                    <AppLayout>
+                      <Templates />
+                    </AppLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -70,7 +76,9 @@ const App = () => (
                 path="/analytics" 
                 element={
                   <ProtectedRoute requireAuth={true}>
-                    <Analytics />
+                    <AppLayout>
+                      <Analytics />
+                    </AppLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -78,7 +86,9 @@ const App = () => (
                 path="/integrations" 
                 element={
                   <ProtectedRoute requireAuth={true}>
-                    <Integrations />
+                    <AppLayout>
+                      <Integrations />
+                    </AppLayout>
                   </ProtectedRoute>
                 } 
               />

@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import Navigation from '@/components/Navigation';
 import { SubscriptionStatus } from '@/components/SubscriptionStatus';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Zap, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, FileText, Zap, TrendingUp, Heart, Globe, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from 'sonner';
 
@@ -24,7 +24,7 @@ const Dashboard = () => {
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(12);
       
       if (error) {
         console.error('Error fetching prompts:', error);
@@ -46,150 +46,146 @@ const Dashboard = () => {
       title: "Total Prompts",
       value: prompts.length,
       icon: FileText,
-      description: "Prompts created"
+      description: "Prompts created",
+      color: "text-red-400"
     },
     {
       title: "Favorites",
       value: prompts.filter(p => p.is_favorite).length,
-      icon: Zap,
-      description: "Favorited prompts"
+      icon: Heart,
+      description: "Favorited prompts",
+      color: "text-red-400"
     },
     {
       title: "Public Prompts",
       value: prompts.filter(p => p.is_public).length,
-      icon: TrendingUp,
-      description: "Shared with community"
+      icon: Globe,
+      description: "Shared with community",
+      color: "text-red-400"
     }
   ];
 
   return (
-    <>
-      <Navigation />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="container mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Welcome back!
-            </h1>
-            <p className="text-gray-600 mt-2">
-              {user?.email ? `Manage your prompts and subscription, ${user.email}` : 'Manage your prompts and subscription'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            {/* Subscription Status */}
-            <div className="lg:col-span-1">
-              <SubscriptionStatus />
-            </div>
-
-            {/* Stats */}
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-              {stats.map((stat, index) => (
-                <Card key={index}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      {stat.title}
-                    </CardTitle>
-                    <stat.icon className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stat.value}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {stat.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="h-5 w-5" />
-                  Create New Prompt
-                </CardTitle>
-                <CardDescription>
-                  Start building your next AI prompt
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Link to="/prompt-lab">
-                  <Button className="w-full">
-                    Go to Prompt Lab
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Browse Templates
-                </CardTitle>
-                <CardDescription>
-                  Explore professional prompt templates
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Link to="/templates">
-                  <Button variant="outline" className="w-full">
-                    View Templates
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Recent Prompts */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Prompts</CardTitle>
-              <CardDescription>
-                Your latest prompt creations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {prompts.length > 0 ? (
-                <div className="space-y-4">
-                  {prompts.map((prompt) => (
-                    <div key={prompt.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <h3 className="font-medium">{prompt.title}</h3>
-                        <p className="text-sm text-gray-600">
-                          {prompt.category || 'Uncategorized'} • {new Date(prompt.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {prompt.is_favorite && (
-                          <span className="text-yellow-500">⭐</span>
-                        )}
-                        {prompt.is_public && (
-                          <span className="text-green-500">🌐</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No prompts yet</h3>
-                  <p className="text-gray-600 mb-4">Get started by creating your first prompt</p>
-                  <Link to="/prompt-lab">
-                    <Button>Create Your First Prompt</Button>
-                  </Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+            Welcome back!
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            {user?.email ? `Create amazing AI prompts, ${user.email.split('@')[0]}` : 'Create amazing AI prompts'}
+          </p>
         </div>
+
+        {/* Stats and Subscription */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+          <div className="lg:col-span-1">
+            <SubscriptionStatus />
+          </div>
+          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {stats.map((stat, index) => (
+              <Card key={index} className="gallery-card">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-foreground">{stat.value}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {stat.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Prompts Gallery */}
+        <Card className="gallery-card">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-bold text-foreground">Your Creations</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Recent prompt masterpieces
+              </CardDescription>
+            </div>
+            <Link to="/prompt-lab">
+              <Button className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600">
+                <Plus className="h-4 w-4 mr-2" />
+                Create New
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            {prompts.length > 0 ? (
+              <div className="gallery-grid">
+                {prompts.map((prompt) => (
+                  <Card key={prompt.id} className="gallery-card group cursor-pointer">
+                    <CardContent className="p-0">
+                      <div className="aspect-video bg-gradient-to-br from-red-900/20 to-black/40 flex items-center justify-center relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="relative z-10 text-center p-4">
+                          <Bot className="h-12 w-12 text-red-400 mx-auto mb-2 opacity-60" />
+                          <div className="text-xs text-gray-400 uppercase tracking-wider">
+                            {prompt.category || 'General'}
+                          </div>
+                        </div>
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          {prompt.is_favorite && (
+                            <Badge variant="secondary" className="bg-red-600/20 text-red-400 border-red-600/30">
+                              <Heart className="h-3 w-3" />
+                            </Badge>
+                          )}
+                          {prompt.is_public && (
+                            <Badge variant="secondary" className="bg-blue-600/20 text-blue-400 border-blue-600/30">
+                              <Globe className="h-3 w-3" />
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-foreground mb-2 group-hover:text-red-400 transition-colors line-clamp-2">
+                          {prompt.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                          {prompt.content?.substring(0, 120)}...
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>{new Date(prompt.created_at).toLocaleDateString()}</span>
+                          <div className="flex items-center gap-1">
+                            <Eye className="h-3 w-3" />
+                            <span>View</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="bg-gradient-to-br from-red-900/20 to-black/40 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                  <FileText className="h-12 w-12 text-red-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Ready to create magic?</h3>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Start your journey into AI prompt mastery. Create your first prompt and unlock endless possibilities.
+                </p>
+                <Link to="/prompt-lab">
+                  <Button className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Prompt
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-    </>
+    </div>
   );
 };
 
