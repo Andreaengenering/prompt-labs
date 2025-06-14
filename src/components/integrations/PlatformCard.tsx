@@ -1,24 +1,34 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { CheckCircle, AlertCircle, Plus, Lock } from 'lucide-react';
 import { Platform } from '@/types/integrations';
 import { useYouTubeOAuth } from "@/hooks/useYouTubeOAuth";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
+import { toast } from "sonner";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PlatformCardProps {
   platform: Platform;
   isConnected: boolean;
-  onConnect: (platformId: string) => void;
+  onConnect: (platformId: string, accountUsername?: string) => void;
   onDisconnect: (platformId: string) => void;
 }
 
 export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }: PlatformCardProps) {
   const { user } = useAuth();
+  const { subscriptionData, createCheckout } = useSubscription();
   const { startOAuth } = useYouTubeOAuth();
+  const isProUser = subscriptionData.subscription_tier === 'premium'
+    || subscriptionData.subscription_tier === 'pro-plus'
+    || subscriptionData.subscription_tier === 'executive-pro';
+
+  const [inputValue, setInputValue] = useState('');
 
   const getInputPlaceholder = () => {
     switch (platform.id) {
@@ -31,14 +41,48 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
     }
   };
 
-  // Handles connection separately for supported OAuth platforms
+  // Helper: Tells if this is a real OAuth connect
+  const isOAuthPlatform = (pid: string) => {
+    return (
+      pid === "youtube" ||
+      pid === "facebook" ||
+      pid === "instagram" ||
+      pid === "linkedin" ||
+      pid === "twitter" ||
+      pid === "tiktok"
+    );
+  };
+
+  // Handles connect click - restrict for non-premium users
   const handleConnectClick = async () => {
+    if (!isProUser) {
+      // Show upgrade modal
+      toast.info("Upgrade to Pro to connect this platform!");
+      createCheckout("premium");
+      return;
+    }
+
     if (platform.id === "youtube") {
-      // Start Google OAuth
       await startOAuth();
-      // Don't immediately call onConnect; will detect connection after OAuth flow
-    } else {
-      onConnect(platform.id);
+      // Actual connect will happen after OAuth (handled in Integrations.tsx)
+      return;
+    }
+
+    // For other OAuth social channels, we'll just "mock" that the user started an OAuth
+    // Real implementation would require separate OAuth provider setups and secure backend flows
+    if (isOAuthPlatform(platform.id)) {
+      // Call onConnect with account username if input available
+      onConnect(platform.id, inputValue || user?.email || "");
+      toast.success(`${platform.name} connected!`);
+      return;
+    }
+
+    // Website manual entry
+    if (platform.id === "website" && inputValue) {
+      onConnect(platform.id, inputValue);
+      toast.success("Website connected!");
+    } else if (platform.id === "website") {
+      toast.warning("Please enter your website URL.");
     }
   };
 
@@ -99,21 +143,25 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
           </div>
         ) : (
           <div className="space-y-4">
-            {(platform.id === 'website' || platform.id === 'tiktok') && (
+            {(platform.id === 'website' || platform.id === 'tiktok' || platform.id === 'facebook' || platform.id === 'instagram' || platform.id === 'linkedin' || platform.id === 'twitter') && (
               <Input 
                 placeholder={getInputPlaceholder()} 
-                className="bg-card border-border" 
+                className="bg-card border-border"
+                value={inputValue}
+                disabled={!isProUser}
+                onChange={e => setInputValue(e.target.value)}
               />
             )}
-            <Button 
-              className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
+            <Button
+              className={`w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 ${!isProUser ? "opacity-60 cursor-not-allowed" : ""}`}
               onClick={handleConnectClick}
-              disabled={platform.premium}
+              disabled={!isProUser}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Connect {platform.name}
+              {!isProUser && <Lock className="h-4 w-4 mr-2 text-muted-foreground" />}
+              {isProUser && <Plus className="h-4 w-4 mr-2" />}
+              {isProUser ? `Connect ${platform.name}` : "Upgrade to Connect"}
             </Button>
-            {platform.premium && (
+            {!isProUser && (
               <p className="text-xs text-muted-foreground text-center">
                 Upgrade to Premium to connect this platform
               </p>

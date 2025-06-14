@@ -78,10 +78,26 @@ const Integrations = () => {
     return null;
   }
 
-  const handleConnect = (platformId: string) => {
-    if (!connectedPlatforms.includes(platformId)) {
-      setConnectedPlatforms([...connectedPlatforms, platformId]);
-    }
+  // Enhanced connect for all platforms
+  const handleConnect = async (platformId: string, accountUsername?: string) => {
+    if (!user) return;
+
+    // Don't add duplicate
+    if (connectedPlatforms.includes(platformId)) return;
+
+    // Insert new social account
+    await supabase.from("social_accounts").insert({
+      user_id: user.id,
+      platform: platformId,
+      account_username: accountUsername || user.email,
+      access_token: null // For OAuth later, if implemented
+    });
+    const { data } = await supabase
+      .from("social_accounts")
+      .select("*")
+      .eq("user_id", user.id);
+    setAccounts(data || []);
+    setConnectedPlatforms((data || []).map((acc: any) => acc.platform));
   };
 
   const handleDisconnect = async (platformId: string) => {
