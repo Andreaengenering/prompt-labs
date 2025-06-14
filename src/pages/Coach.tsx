@@ -70,7 +70,7 @@ export default function Coach() {
     },
   ]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [chatLoading, setChatLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // 👇 Get the current user's access token
@@ -79,11 +79,11 @@ export default function Coach() {
 
   async function sendMessage(e?: React.FormEvent) {
     if (e) e.preventDefault();
-    if (!input.trim() || loading) return;
+    if (!input.trim() || chatLoading) return;
     const userMsg: Message = { role: "user", content: input };
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
-    setLoading(true);
+    setChatLoading(true);
 
     try {
       const res = await fetch(PROMPT_COACH_URL, {
@@ -120,7 +120,7 @@ export default function Coach() {
         },
       ]);
     }
-    setLoading(false);
+    setChatLoading(false);
     textareaRef.current?.focus();
   }
 
@@ -141,7 +141,7 @@ export default function Coach() {
             {messages.map((m, idx) => (
               <ChatBubble key={idx} role={m.role} content={m.content} />
             ))}
-            {loading && (
+            {chatLoading && (
               <ChatBubble role="assistant" content="Thinking..." />
             )}
           </div>
@@ -152,11 +152,11 @@ export default function Coach() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your prompt question or an example prompt..."
               rows={2}
-              disabled={loading}
+              disabled={chatLoading}
               className="resize-none min-h-[40px] flex-1"
               autoFocus
             />
-            <Button type="submit" disabled={loading || !input.trim()}>
+            <Button type="submit" disabled={chatLoading || !input.trim()}>
               <Send className="h-4 w-4 mr-1" />Send
             </Button>
           </form>
