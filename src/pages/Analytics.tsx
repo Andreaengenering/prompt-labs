@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +7,8 @@ import {
   BarChart3, TrendingUp, Users, Eye, Heart, MessageSquare,
   Calendar, Clock, Target, Zap, Star, ArrowUp, ArrowDown
 } from 'lucide-react';
+import { useContentPerformance } from "@/hooks/useContentPerformance";
+import { AlertTriangle } from "lucide-react";
 
 const Analytics = () => {
   const { user, loading } = useAuth();
@@ -75,6 +76,17 @@ const Analytics = () => {
       recommendation: 'Focus on trending topics'
     }
   ];
+
+  // Add Content Analysis logic
+  const {
+    loading: analysisLoading,
+    error: analysisError,
+    topTypes,
+    bestTime,
+    hashtagSuggestion,
+    wordCountSuggestion,
+    isEmpty,
+  } = useContentPerformance();
 
   return (
     <div className="min-h-screen bg-background">
@@ -186,25 +198,82 @@ const Analytics = () => {
           </TabsContent>
 
           <TabsContent value="content" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {contentInsights.map((insight, index) => (
-                <Card key={index} className="gallery-card">
+            {analysisLoading ? (
+              <div className="flex justify-center py-16">
+                <Loader2 className="animate-spin h-8 w-8 text-red-400" />
+              </div>
+            ) : analysisError ? (
+              <div className="flex flex-col items-center py-10">
+                <AlertTriangle className="h-8 w-8 text-red-600 mb-2" />
+                <span className="text-red-500 font-semibold">{analysisError}</span>
+              </div>
+            ) : isEmpty ? (
+              <div className="text-center py-16">
+                <div className="bg-gradient-to-br from-red-900/20 to-black/40 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                  <BookOpen className="h-12 w-12 text-red-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No analytics data</h3>
+                <p className="text-muted-foreground">
+                  Connect your platforms or add content performance data to see insights here.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="gallery-card">
                   <CardHeader>
-                    <CardTitle className="text-lg text-foreground">{insight.title}</CardTitle>
+                    <CardTitle className="text-foreground">Top Performing Content Types</CardTitle>
+                    <CardDescription>
+                      Calculated from your recent posts
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {topTypes.length === 0 ? (
+                      <p className="text-muted-foreground">No data</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {topTypes.map((t, i) => (
+                          <div className="flex justify-between items-center" key={t.type}>
+                            <span className="text-sm text-foreground">{t.type}</span>
+                            <Badge variant="secondary" className="bg-red-600/20 text-red-400">
+                              {t.avg.toFixed(1)}% engagement
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                <Card className="gallery-card">
+                  <CardHeader>
+                    <CardTitle className="text-foreground">Optimization Suggestions</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <div className="text-2xl font-bold text-red-500">{insight.type}</div>
-                      <div className="flex items-center space-x-2">
-                        <Star className="h-4 w-4 text-red-400" />
-                        <span className="text-sm font-medium text-foreground">{insight.engagement} performance</span>
+                      <div className="p-3 bg-red-950/20 rounded-lg border border-red-600/30">
+                        <p className="text-sm font-medium text-red-400">Post Timing</p>
+                        <p className="text-xs text-foreground">
+                          {bestTime && bestTime !== "-"
+                            ? <>Best engagement at <b>{bestTime}</b></>
+                            : "Not enough data to determine"}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground">{insight.recommendation}</p>
+                      <div className="p-3 bg-red-950/20 rounded-lg border border-red-600/30">
+                        <p className="text-sm font-medium text-red-400">Hashtag Strategy</p>
+                        <p className="text-xs text-foreground">
+                          {hashtagSuggestion}
+                        </p>
+                      </div>
+                      <div className="p-3 bg-red-950/20 rounded-lg border border-red-600/30">
+                        <p className="text-sm font-medium text-red-400">Content Length</p>
+                        <p className="text-xs text-foreground">
+                          {wordCountSuggestion}
+                        </p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="audience" className="space-y-6">

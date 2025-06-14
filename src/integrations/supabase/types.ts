@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      content_performance: {
+        Row: {
+          created_at: string
+          engagement_rate: number | null
+          hashtags: string[] | null
+          id: string
+          platform: string
+          post_time: string | null
+          post_type: string
+          updated_at: string
+          user_id: string
+          word_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          engagement_rate?: number | null
+          hashtags?: string[] | null
+          id?: string
+          platform: string
+          post_time?: string | null
+          post_type: string
+          updated_at?: string
+          user_id: string
+          word_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          engagement_rate?: number | null
+          hashtags?: string[] | null
+          id?: string
+          platform?: string
+          post_time?: string | null
+          post_type?: string
+          updated_at?: string
+          user_id?: string
+          word_count?: number | null
+        }
+        Relationships: []
+      }
       early_access_signups: {
         Row: {
           created_at: string
