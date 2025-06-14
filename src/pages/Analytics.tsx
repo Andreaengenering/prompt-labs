@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { 
   BarChart3, TrendingUp, Users, Eye, Heart, MessageSquare,
-  Calendar, Clock, Target, Zap, Star, ArrowUp, ArrowDown
+  Calendar, Clock, Target, Zap, Star, ArrowUp, ArrowDown, Loader, BookOpen
 } from 'lucide-react';
 import { useContentPerformance } from "@/hooks/useContentPerformance";
 import { AlertTriangle } from "lucide-react";
@@ -200,7 +201,7 @@ const Analytics = () => {
           <TabsContent value="content" className="space-y-6">
             {analysisLoading ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="animate-spin h-8 w-8 text-red-400" />
+                <Loader className="animate-spin h-8 w-8 text-red-400" />
               </div>
             ) : analysisError ? (
               <div className="flex flex-col items-center py-10">
