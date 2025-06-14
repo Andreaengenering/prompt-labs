@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ import { SidebarUpgradeCTA } from "@/components/sidebar/SidebarUpgradeCTA";
 import { Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CreateTemplateDialog from "@/components/templates/CreateTemplateDialog";
+import BlankTemplateCard from "@/components/templates/BlankTemplateCard";
 
 interface PromptLabTabsProps {
   selectedCategory: string;
@@ -116,17 +116,22 @@ const PromptLabTabs = ({ selectedCategory, setSelectedCategory, searchTerm }: Pr
             </Badge>
           </div>
           
-          {/* Only show the "Create Custom Template" button in the All Templates view */}
+          {/* Only show the "BlankTemplateCard" and "Create Custom Template" button in the All Templates view */}
           {selectedCategory === "all" && (
-            <div className="mb-3 flex justify-start">
-              <button
-                type="button"
-                onClick={() => setDialogOpen(true)}
-                className="inline-flex items-center bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:from-red-700 hover:to-yellow-500 transition-all"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Custom Template
-              </button>
+            <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+              <div className="max-w-md w-full">
+                <BlankTemplateCard />
+              </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setDialogOpen(true)}
+                  className="inline-flex items-center bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:from-red-700 hover:to-yellow-500 transition-all"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Custom Template
+                </button>
+              </div>
             </div>
           )}
           
@@ -166,4 +171,3 @@ const PromptLabTabs = ({ selectedCategory, setSelectedCategory, searchTerm }: Pr
 };
 
 export default PromptLabTabs;
-
