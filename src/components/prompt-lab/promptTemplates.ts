@@ -1,19 +1,3 @@
-import { 
-  Zap, TrendingUp, Megaphone, BookOpen, Users, Target, Play, ShoppingCart,
-  Briefcase, Globe, DollarSign, BarChart3, Smartphone, Heart, Star, Crown
-} from 'lucide-react';
-
-export const templateCategories = [
-  { id: 'all', name: 'All Templates', icon: Zap, color: '#DC2626' },
-  { id: 'business', name: 'Business Growth', icon: TrendingUp, color: '#DC2626' },
-  { id: 'marketing', name: 'Marketing & Ads', icon: Megaphone, color: '#DC2626' },
-  { id: 'content', name: 'Content Creation', icon: BookOpen, color: '#DC2626' },
-  { id: 'social', name: 'Social Media', icon: Users, color: '#DC2626' },
-  { id: 'sales', name: 'Sales & Leads', icon: Target, color: '#DC2626' },
-  { id: 'courses', name: 'Online Courses', icon: Play, color: '#DC2626' },
-  { id: 'ecommerce', name: 'E-commerce', icon: ShoppingCart, color: '#DC2626' }
-];
-
 export const promptTemplates = [
   // Business Growth Templates
   {
@@ -52,7 +36,6 @@ export const promptTemplates = [
     usage: 134,
     is_premium: true
   },
-
   // Marketing & Ads Templates
   {
     id: 4,
@@ -102,7 +85,6 @@ export const promptTemplates = [
     usage: 112,
     is_premium: true
   },
-
   // Content Creation Templates
   {
     id: 8,
@@ -140,7 +122,6 @@ export const promptTemplates = [
     usage: 223,
     is_premium: true
   },
-
   // Social Media Templates
   {
     id: 11,
@@ -186,7 +167,6 @@ export const promptTemplates = [
     rating: 4.5,
     usage: 89
   },
-
   // Sales & Leads Templates
   {
     id: 15,
@@ -232,7 +212,6 @@ export const promptTemplates = [
     rating: 4.6,
     usage: 143
   },
-
   // Online Courses Templates
   {
     id: 19,
@@ -256,7 +235,6 @@ export const promptTemplates = [
     rating: 4.7,
     usage: 156
   },
-
   // E-commerce Templates
   {
     id: 21,
