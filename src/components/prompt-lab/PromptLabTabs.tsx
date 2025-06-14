@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePromptLabCredits } from "@/hooks/usePromptLabCredits";
 import { SidebarUpgradeCTA } from "@/components/sidebar/SidebarUpgradeCTA";
 import { Loader2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area"; // <-- Added
 
 interface PromptLabTabsProps {
   selectedCategory: string;
@@ -58,23 +60,27 @@ const PromptLabTabs = ({ selectedCategory, setSelectedCategory, searchTerm }: Pr
 
   return (
     <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
-      <div className="overflow-x-auto">
-        <TabsList className="inline-flex h-auto p-1 bg-card/50 backdrop-blur-sm">
-          {templateCategories.map((category) => {
-            const Icon = category.icon;
-            return (
-              <TabsTrigger 
-                key={category.id} 
-                value={category.id}
-                className="flex items-center space-x-2 whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600 data-[state=active]:to-red-500 data-[state=active]:text-white"
-              >
-                <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{category.name}</span>
-                <span className="sm:hidden">{category.name.split(' ')[0]}</span>
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
+      <div className="w-full">
+        <ScrollArea className="w-full whitespace-nowrap overflow-x-auto pb-2" style={{ maxWidth: "100%" }}>
+          <div className="min-w-max flex">
+            <TabsList className="inline-flex h-auto p-1 bg-card/50 backdrop-blur-sm">
+              {templateCategories.map((category) => {
+                const Icon = category.icon;
+                return (
+                  <TabsTrigger 
+                    key={category.id} 
+                    value={category.id}
+                    className="flex items-center space-x-2 whitespace-nowrap data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600 data-[state=active]:to-red-500 data-[state=active]:text-white"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="hidden sm:inline">{category.name}</span>
+                    <span className="sm:hidden">{category.name.split(' ')[0]}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
+        </ScrollArea>
       </div>
 
       {/* Show usage/upgrade CTA if not pro */}
