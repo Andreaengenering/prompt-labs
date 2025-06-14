@@ -38,15 +38,25 @@ serve(async (req) => {
       }),
     });
 
-    // Return OpenAI error messages for clarity
+    // Improved error handling: try to parse error only once
     if (!response.ok) {
-      const errJson = await response.json().catch(() => null);
-      const errText = await response.text();
-      console.error("OpenAI API error:", errJson || errText);
+      let errorOutput: unknown = null;
+      let errorRaw = "";
+      try {
+        errorOutput = await response.json();
+      } catch {
+        // If .json() fails, fallback to .text(). But ONLY try one or the other.
+        try {
+          errorRaw = await response.text();
+        } catch {
+          errorRaw = "Unable to parse error response from OpenAI.";
+        }
+      }
+      console.error("OpenAI API error:", errorOutput || errorRaw);
       return new Response(
         JSON.stringify({
           error: "OpenAI API error",
-          details: errJson || errText,
+          details: errorOutput || errorRaw,
           status: response.status,
         }),
         {
