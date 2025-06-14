@@ -120,7 +120,7 @@ const PromptLabTabs = ({ selectedCategory, setSelectedCategory, searchTerm }: Pr
           {selectedCategory === "all" && (
             <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
               <div className="max-w-md w-full">
-                <BlankTemplateCard />
+                <BlankTemplateCard onCreate={() => setDialogOpen(true)} />
               </div>
               <div>
                 <button
