@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import Analytics from "./pages/Analytics";
 import Integrations from "./pages/Integrations";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Academy from "./pages/Academy";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,6 +92,7 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
+              <Route path="/academy" element={<Academy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

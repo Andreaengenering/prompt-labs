@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -25,7 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Zap, LayoutDashboard, Bot, BookOpen, BarChart3, Globe,
-  User, Settings, HelpCircle, LogOut, Plus, Crown
+  User, Settings, HelpCircle, LogOut, Plus, Crown, BookText
 } from 'lucide-react';
 
 const navigationItems = [
@@ -53,6 +52,12 @@ const navigationItems = [
     title: 'Integrations',
     url: '/integrations',
     icon: Globe,
+  },
+  // NEW: Academy link
+  {
+    title: 'Prompt Labs Academy',
+    url: '/academy',
+    icon: BookText,
   },
 ];
 
@@ -182,4 +187,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-
