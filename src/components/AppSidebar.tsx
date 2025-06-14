@@ -111,7 +111,7 @@ export function AppSidebar() {
         {shouldShowUpgrade && (
           <div className="mt-6">
             <Button
-              className="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white font-bold shadow-lg flex items-center gap-2"
+              className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold shadow-lg flex items-center gap-2"
               onClick={() => createCheckout('premium')}
               disabled={loading}
             >
