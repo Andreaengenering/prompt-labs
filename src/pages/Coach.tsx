@@ -5,12 +5,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Send } from "lucide-react";
 
+// Update with your project ref from the environment:
+const SUPABASE_PROJECT_REF = "nxxhmfimzgxyemoldnqb";
+const PROMPT_COACH_URL = `https://${SUPABASE_PROJECT_REF}.functions.supabase.co/prompt-coach-chat`;
+
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
-// Basic ChatBubble component
 function ChatBubble({ role, content }: Message) {
   return (
     <div className={`flex ${role === "user" ? "justify-end" : "justify-start"} mb-2`}>
@@ -23,7 +26,6 @@ function ChatBubble({ role, content }: Message) {
   );
 }
 
-// Main Coach chat page
 export default function Coach() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -44,7 +46,7 @@ export default function Coach() {
     setLoading(true);
 
     try {
-      const res = await fetch("/functions/v1/prompt-coach-chat", {
+      const res = await fetch(PROMPT_COACH_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -54,15 +56,27 @@ export default function Coach() {
           ],
         }),
       });
+      if (!res.ok) {
+        // Give a clearer error for HTTP errors
+        const text = await res.text();
+        throw new Error(`Server error: ${res.status} ${text}`);
+      }
       const data = await res.json();
       setMessages((msgs) => [
         ...msgs,
-        { role: "assistant", content: data.message || "Sorry, something went wrong." },
+        { role: "assistant", content: data.message || "Sorry, the AI could not generate a response." },
       ]);
-    } catch {
-      setMessages((msgs) => [...msgs, {
-        role: "assistant", content: "Oops! I couldn't get a response from the AI. Please try again later.",
-      }]);
+    } catch (error: any) {
+      setMessages((msgs) => [
+        ...msgs,
+        {
+          role: "assistant",
+          content:
+            "Oops! I couldn't get a response from the AI. " +
+            "Please check your network, your Supabase secrets, and try again. " +
+            (error?.message ? `Error details: ${error.message}` : ""),
+        },
+      ]);
     }
     setLoading(false);
     textareaRef.current?.focus();
