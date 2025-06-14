@@ -18,13 +18,13 @@ interface CreateTemplateDialogProps {
 }
 
 const BLANK_TEMPLATE_HINT = 
-`[Goal]
+`[ Goal ]
 e.g. "Help me write an engaging Instagram caption for a bakery's spring sale."
 
-[Context]
+[ Context ]
 e.g. "The bakery specializes in sourdough, audience is millennial foodies."
 
-[Requirements/Constraints]
+[ Requirements / Constraints ]
 e.g. "Tone: playful, Up to 30 words, mention the word 'blooming'."
 
 [You can also paste an existing template here]
@@ -44,19 +44,26 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
     }
   };
 
-  const handleExample = () => setText(BLANK_TEMPLATE_HINT);
+  const handleExample = () => {
+    setText(BLANK_TEMPLATE_HINT);
+    setMode("blank");
+  };
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent>
+      <DialogContent className="bg-background/95 sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {mode === "blank" ? "Create a New Prompt Template" : "Paste an Existing Template"}
+            {mode === "blank" ? (
+              <span className="bg-gradient-to-r from-purple-500 to-pink-400 bg-clip-text text-transparent">Create a New Prompt Template</span>
+            ) : (
+              "Paste an Existing Template"
+            )}
           </DialogTitle>
           <DialogDescription>
             {mode === "blank"
-              ? "Start from step-by-step examples, or paste in your template below."
-              : "Paste in a ready-made prompt template or start editing below."}
+              ? "Start with structured hints, or paste in your template below."
+              : "Paste a ready-made prompt template or start editing below."}
           </DialogDescription>
         </DialogHeader>
         <div className="mb-2 flex gap-2">
@@ -64,7 +71,8 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
             size="sm"
             variant={mode === "blank" ? "default" : "outline"}
             className="flex-1"
-            onClick={() => { setMode("blank"); handleExample(); }}
+            onClick={handleExample}
+            type="button"
           >
             <Sparkles className="h-4 w-4 mr-1" /> Use Example Structure
           </Button>
@@ -79,13 +87,13 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
           </Button>
         </div>
         <Textarea
-          className="min-h-[160px] bg-background/70 text-foreground placeholder:text-muted-foreground"
+          className="min-h-[170px] bg-background/80 rounded-md border border-border text-foreground placeholder:text-muted-foreground font-mono text-base shadow-inner"
           value={text}
           onChange={e => setText(e.target.value)}
           placeholder={BLANK_TEMPLATE_HINT}
+          spellCheck={false}
         />
         <DialogFooter>
-          {/* This is only UI. You can extend it to save the template as required */}
           <Button variant="secondary" type="button" onClick={onClose}>Close</Button>
           {/* Add save or create logic here in future */}
         </DialogFooter>

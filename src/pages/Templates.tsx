@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -78,14 +79,14 @@ const Templates = () => {
   }, [categoriesError, templatesError]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-background to-card pb-16">
+      <div className="container mx-auto max-w-6xl px-2 sm:px-8 py-12">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+        <div className="mb-10">
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
             Prompt Templates
           </h1>
-          <p className="text-muted-foreground mt-2 text-lg">
+          <p className="text-muted-foreground mt-3 text-lg sm:text-xl font-medium">
             Professional templates to master AI conversations
           </p>
           {user && (
@@ -96,19 +97,21 @@ const Templates = () => {
         </div>
 
         {/* Search */}
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-center">
           <TemplateSearch 
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
           />
         </div>
 
-        <CategoryTabs 
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          templates={templates}
-        />
+        <div className="rounded-2xl shadow-xl bg-card/80 border border-border px-2 py-6 sm:px-6">
+          <CategoryTabs 
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            templates={templates}
+          />
+        </div>
 
         {/* Blank Template Dialog */}
         <CreateTemplateDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
@@ -118,3 +121,4 @@ const Templates = () => {
 };
 
 export default Templates;
+
