@@ -24,7 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Zap, LayoutDashboard, Bot, BookOpen, BarChart3, Globe,
-  User, Settings, HelpCircle, LogOut, Plus, Crown, BookText
+  User, Settings, HelpCircle, LogOut, Plus, Crown, BookText, Sparkles, MessageCircle
 } from 'lucide-react';
 
 const navigationItems = [
@@ -58,6 +58,16 @@ const navigationItems = [
     title: 'Prompt Labs Academy',
     url: '/academy',
     icon: BookText,
+  },
+  {
+    title: 'Prompt Coach',
+    url: '/coach',
+    icon: Sparkles,
+  },
+  {
+    title: 'Feedback',
+    url: '/feedback',
+    icon: MessageCircle,
   },
 ];
 

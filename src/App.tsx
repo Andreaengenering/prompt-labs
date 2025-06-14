@@ -16,6 +16,8 @@ import Integrations from "./pages/Integrations";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Academy from "./pages/Academy";
+import Coach from "./pages/Coach";
+import FeedbackPage from "./pages/Feedback";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -91,6 +93,26 @@ const App = () => (
                     </AppLayout>
                   </ProtectedRoute>
                 } 
+              />
+              <Route 
+                path="/coach"
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <AppLayout>
+                      <Coach />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/feedback"
+                element={
+                  <ProtectedRoute requireAuth={true}>
+                    <AppLayout>
+                      <FeedbackPage />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
               />
               <Route path="/academy" element={<Academy />} />
               <Route path="*" element={<NotFound />} />
