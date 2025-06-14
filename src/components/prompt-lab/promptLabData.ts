@@ -25,7 +25,8 @@ export const promptTemplates = [
     tags: ["business transformation", "digital strategy", "growth optimization"],
     difficulty: "Intermediate",
     rating: 4.8,
-    usage: 156
+    usage: 156,
+    is_premium: true
   },
   {
     id: 2,
@@ -36,7 +37,8 @@ export const promptTemplates = [
     tags: ["conversion optimization", "website improvement", "user experience"],
     difficulty: "Advanced",
     rating: 4.9,
-    usage: 203
+    usage: 203,
+    is_premium: true
   },
   {
     id: 3,
@@ -47,7 +49,8 @@ export const promptTemplates = [
     tags: ["business scaling", "strategic growth", "expansion planning"],
     difficulty: "Advanced",
     rating: 4.7,
-    usage: 134
+    usage: 134,
+    is_premium: true
   },
 
   // Marketing & Ads Templates
@@ -60,7 +63,8 @@ export const promptTemplates = [
     tags: ["google ads", "ppc optimization", "campaign management"],
     difficulty: "Advanced",
     rating: 4.8,
-    usage: 267
+    usage: 267,
+    is_premium: true
   },
   {
     id: 5,
@@ -71,7 +75,8 @@ export const promptTemplates = [
     tags: ["facebook ads", "social media advertising", "audience engagement"],
     difficulty: "Intermediate",
     rating: 4.6,
-    usage: 189
+    usage: 189,
+    is_premium: true
   },
   {
     id: 6,
@@ -82,7 +87,8 @@ export const promptTemplates = [
     tags: ["youtube ads", "video marketing", "content promotion"],
     difficulty: "Intermediate",
     rating: 4.5,
-    usage: 145
+    usage: 145,
+    is_premium: true
   },
   {
     id: 7,
@@ -93,7 +99,8 @@ export const promptTemplates = [
     tags: ["niche marketing", "targeted marketing", "market positioning"],
     difficulty: "Intermediate",
     rating: 4.7,
-    usage: 112
+    usage: 112,
+    is_premium: true
   },
 
   // Content Creation Templates
@@ -106,7 +113,8 @@ export const promptTemplates = [
     tags: ["content calendar", "content strategy", "consistency planning"],
     difficulty: "Beginner",
     rating: 4.6,
-    usage: 298
+    usage: 298,
+    is_premium: true
   },
   {
     id: 9,
@@ -117,7 +125,8 @@ export const promptTemplates = [
     tags: ["video content", "lead generation", "content brainstorming"],
     difficulty: "Intermediate",
     rating: 4.8,
-    usage: 176
+    usage: 176,
+    is_premium: true
   },
   {
     id: 10,
@@ -128,7 +137,8 @@ export const promptTemplates = [
     tags: ["viral content", "content strategy", "social media growth"],
     difficulty: "Advanced",
     rating: 4.4,
-    usage: 223
+    usage: 223,
+    is_premium: true
   },
 
   // Social Media Templates

@@ -52,7 +52,7 @@ serve(async (req) => {
 
     // Updated pricing with new amounts
     const planPricing = {
-      premium: { amount: 1900, name: "Premium Plan" },
+      premium: { amount: 2600, name: "Premium Plan" },
       "pro-plus": { amount: 2900, name: "Pro Plus Plan" },
       "executive-pro": { amount: 3900, name: "Executive Pro Plan" }
     };
