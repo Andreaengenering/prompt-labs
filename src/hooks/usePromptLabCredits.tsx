@@ -71,12 +71,12 @@ export function usePromptLabCredits() {
   const increment = async () => {
     if (!user) return false;
     setCredits(c => ({ ...c, loading: true }));
-    // Try to upsert-or-increment atomically
+    // Fix: onConflict as string, not array
     const { data, error } = await supabase
       .from("prompt_lab_credits")
       .upsert(
         { user_id: user.id, count: credits.count + 1, updated_at: new Date().toISOString() },
-        { onConflict: ["user_id"] }
+        { onConflict: "user_id" }
       )
       .select()
       .maybeSingle();
