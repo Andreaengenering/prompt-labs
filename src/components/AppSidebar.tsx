@@ -8,7 +8,7 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from '@/components/ui/sidebar';
-import { Zap, BookText, Sparkles, MessageCircle } from 'lucide-react';
+import { Zap, BookText, Sparkles, MessageCircle, LayoutDashboard, Bot, BookOpen, BarChart3, Globe } from 'lucide-react';
 
 import { SidebarNavigation } from './sidebar/SidebarNavigation';
 import { SidebarProfile } from './sidebar/SidebarProfile';
@@ -20,27 +20,27 @@ const navigationItems = [
   {
     title: 'Dashboard',
     url: '/dashboard',
-    icon: require('lucide-react').LayoutDashboard,
+    icon: LayoutDashboard,
   },
   {
     title: 'Prompt Lab',
     url: '/prompt-lab',
-    icon: require('lucide-react').Bot,
+    icon: Bot,
   },
   {
     title: 'Templates',
     url: '/templates',
-    icon: require('lucide-react').BookOpen,
+    icon: BookOpen,
   },
   {
     title: 'Analytics',
     url: '/analytics',
-    icon: require('lucide-react').BarChart3,
+    icon: BarChart3,
   },
   {
     title: 'Integrations',
     url: '/integrations',
-    icon: require('lucide-react').Globe,
+    icon: Globe,
   },
   // NEW: Academy link
   {
@@ -116,3 +116,4 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
