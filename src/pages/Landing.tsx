@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +7,7 @@ import {
   Zap, Bot, BookOpen, BarChart3, Globe, 
   Star, ArrowRight, Sparkles, Target, Rocket 
 } from 'lucide-react';
+import { EarlyAccessSignupForm } from "@/components/EarlyAccessSignupForm";
 
 const Landing = () => {
   const { user } = useAuth();
@@ -168,6 +168,11 @@ const Landing = () => {
               </Link>
             </CardContent>
           </Card>
+
+          {/* Early Access Signup Form */}
+          <div className="mt-16 max-w-lg mx-auto">
+            <EarlyAccessSignupForm />
+          </div>
         </div>
       </section>
     </div>
