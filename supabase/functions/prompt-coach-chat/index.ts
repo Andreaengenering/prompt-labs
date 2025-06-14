@@ -37,15 +37,41 @@ serve(async (req) => {
         max_tokens: 600,
       }),
     });
+
+    // Return OpenAI error messages for clarity
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => null);
+      const errText = await response.text();
+      console.error("OpenAI API error:", errJson || errText);
+      return new Response(
+        JSON.stringify({
+          error: "OpenAI API error",
+          details: errJson || errText,
+          status: response.status,
+        }),
+        {
+          status: response.status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const data = await response.json();
-    const coachMessage = data.choices?.[0]?.message?.content || "Sorry, something went wrong.";
+    const coachMessage = data.choices?.[0]?.message?.content || "OpenAI API returned no content.";
     return new Response(JSON.stringify({ message: coachMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Failed to generate chat response." }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error("Edge function error:", err);
+    return new Response(
+      JSON.stringify({
+        error: "Failed to generate chat response.",
+        details: err instanceof Error ? err.message : String(err),
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   }
 });
