@@ -2,32 +2,85 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { SubscriptionStatus } from '@/components/SubscriptionStatus';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Zap, TrendingUp, Heart, Globe, Eye, Bot } from "lucide-react";
+import { Plus, FileText, Heart, Globe, Eye, Bot, Zap, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from 'sonner';
 import CreateTemplateDialog from "@/components/templates/CreateTemplateDialog";
+
+function TopTemplateCard({ template }: { template: any }) {
+  return (
+    <Card className="gallery-card shadow-lg rounded-2xl border-0 bg-gradient-to-br from-zinc-900/60 to-zinc-800/90 transition-transform duration-200 hover:scale-[1.025] h-full flex flex-col">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2 line-clamp-1">
+          {template.title}
+        </CardTitle>
+        <span className="inline-block rounded-lg p-2 bg-black/10">
+          <Bot className="h-6 w-6 text-red-400" />
+        </span>
+      </CardHeader>
+      <CardContent className="flex flex-col h-full">
+        <div className="mb-2 min-h-[48px]">
+          <CardDescription className="line-clamp-2">{template.description}</CardDescription>
+        </div>
+        <div className="flex items-center gap-3 py-1">
+          <Badge variant="outline" className="text-xs capitalize">
+            {template.difficulty_level}
+          </Badge>
+          <span className="inline-flex items-center gap-1 text-xs text-yellow-400">
+            <Star className="h-4 w-4" />
+            {template.rating ?? 5.0}
+          </span>
+          <span className="inline-flex items-center gap-1 text-xs text-blue-400">
+            <Zap className="h-4 w-4" /> {template.usage_count ?? 0}
+          </span>
+        </div>
+        {template.tags && (
+          <div className="flex flex-wrap gap-1 my-1">
+            {template.tags.slice(0,2).map((tag: string) => (
+              <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+            ))}
+          </div>
+        )}
+        <div className="flex justify-end mt-auto">
+          <Button
+            size="sm"
+            className="bg-gradient-to-r from-red-600 to-yellow-500 hover:from-red-700 hover:to-yellow-600"
+            onClick={() => {
+              navigator.clipboard.writeText(template.prompt_template ?? "").then(() => {
+                toast.success("Template copied to clipboard!");
+              }).catch(() => {
+                toast.error("Failed to copy template.");
+              });
+            }}
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Use
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 // Cosmetic improvements: card UI, contrast, spacing, polish
 const Dashboard = () => {
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   
+  // Existing: fetch user's prompts
   const { data: prompts = [], error } = useQuery({
     queryKey: ['user-prompts', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      
       const { data, error } = await supabase
         .from('prompts')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(12);
-      
       if (error) {
         console.error('Error fetching prompts:', error);
         throw error;
@@ -37,35 +90,24 @@ const Dashboard = () => {
     enabled: !!user
   });
 
-  useEffect(() => {
-    if (error) {
-      toast.error('Failed to load your prompts');
+  // NEW: Fetch top 4 performing templates
+  const { data: topTemplates = [], error: templateError, isLoading: templatesLoading } = useQuery({
+    queryKey: ['top-templates'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('templates')
+        .select('*')
+        .order('usage_count', { ascending: false })
+        .limit(4);
+      if (error) throw error;
+      return data ?? [];
     }
-  }, [error]);
+  });
 
-  const stats = [
-    {
-      title: "Total Prompts",
-      value: prompts.length,
-      icon: FileText,
-      description: "Prompts created",
-      color: "text-red-400"
-    },
-    {
-      title: "Favorites",
-      value: prompts.filter(p => p.is_favorite).length,
-      icon: Heart,
-      description: "Favorited prompts",
-      color: "text-pink-400"
-    },
-    {
-      title: "Public Prompts",
-      value: prompts.filter(p => p.is_public).length,
-      icon: Globe,
-      description: "Shared with community",
-      color: "text-blue-400"
-    }
-  ];
+  useEffect(() => {
+    if (error) toast.error('Failed to load your prompts');
+    if (templateError) toast.error('Failed to load top templates');
+  }, [error, templateError]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,30 +122,26 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Stats and Subscription */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
-          <div className="lg:col-span-1">
-            <div className="rounded-2xl shadow-lg border border-border/70 bg-gradient-to-br from-background via-zinc-900/60 to-black/70 p-6">
-              <SubscriptionStatus />
-            </div>
-          </div>
-          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {stats.map((stat, index) => (
-              <Card key={index} className="gallery-card shadow-lg rounded-2xl border-0 bg-gradient-to-br from-zinc-900/60 to-zinc-800/90 transition-transform duration-200 hover:scale-[1.025]">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                  <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
-                    <span>{stat.title}</span>
-                  </CardTitle>
-                  <span className={`inline-block rounded-lg p-2 bg-black/10`}>
-                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                  </span>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-foreground mb-3 drop-shadow-lg">{stat.value}</div>
-                  <p className="text-sm text-muted-foreground mt-1">{stat.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+        {/* Top Performing Templates */}
+        <div className="mb-12">
+          <h2 className="text-xl font-bold mb-4 text-foreground">Top Performing Templates</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {templatesLoading ? (
+              Array(4).fill(null).map((_, idx) => (
+                <Card key={idx} className="h-48 animate-pulse bg-muted/30" />
+              ))
+            ) : topTemplates && topTemplates.length > 0 ? (
+              topTemplates.map((template) => (
+                <TopTemplateCard key={template.id} template={template} />
+              ))
+            ) : (
+              <div className="col-span-4 text-center">
+                <div className="bg-gradient-to-br from-red-900/20 to-black/40 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <FileText className="h-10 w-10 text-red-400" />
+                </div>
+                <p className="text-muted-foreground">No templates found.</p>
+              </div>
+            )}
           </div>
         </div>
 
