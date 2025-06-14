@@ -4,6 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Send } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Lock, Crown } from "lucide-react";
 
 // Update with your project ref from the environment:
 const SUPABASE_PROJECT_REF = "nxxhmfimzgxyemoldnqb";
@@ -26,7 +28,41 @@ function ChatBubble({ role, content }: Message) {
   );
 }
 
+// Util: Checks for Pro or above
+const proTiers = ['premium', 'pro-plus', 'executive-pro'];
+function isProUser(tier: string | undefined) {
+  return !!tier && proTiers.includes(tier);
+}
+
 export default function Coach() {
+  const { subscriptionData, createCheckout, loading } = useSubscription();
+
+  if (!isProUser(subscriptionData.subscription_tier)) {
+    return (
+      <div className="max-w-md mx-auto my-20">
+        <Card>
+          <CardContent className="flex flex-col items-center gap-6 py-10">
+            <Lock className="h-12 w-12 text-gray-400 mb-1" />
+            <h2 className="text-2xl font-bold mb-2 text-center">
+              Prompt Coach is a Pro Feature
+            </h2>
+            <p className="text-gray-600 text-center">
+              Upgrade to the Pro plan to unlock the Prompt Coach and get expert guidance for high-impact prompt engineering.
+            </p>
+            <Button
+              className="mt-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold shadow-lg flex items-center gap-2"
+              onClick={() => createCheckout('premium')}
+              disabled={loading}
+            >
+              <Crown className="h-5 w-5 text-yellow-100 mr-2 drop-shadow" />
+              Upgrade to Pro
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",

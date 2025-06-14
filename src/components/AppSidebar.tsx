@@ -24,8 +24,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Zap, LayoutDashboard, Bot, BookOpen, BarChart3, Globe,
-  User, Settings, HelpCircle, LogOut, Plus, Crown, BookText, Sparkles, MessageCircle
+  User, Settings, HelpCircle, LogOut, Plus, Crown, BookText, Sparkles, MessageCircle, Lock
 } from 'lucide-react';
+
+const proTiers = ['premium', 'pro-plus', 'executive-pro'];
+
+function isProUser(subscriptionTier: string | undefined) {
+  return !!subscriptionTier && proTiers.includes(subscriptionTier);
+}
 
 const navigationItems = [
   {
@@ -63,6 +69,7 @@ const navigationItems = [
     title: 'Prompt Coach',
     url: '/coach',
     icon: Sparkles,
+    requiresPro: true,
   },
   {
     title: 'Feedback',
@@ -84,6 +91,12 @@ export function AppSidebar() {
     (!subscriptionData.subscribed ||
       subscriptionData.subscription_tier === 'free' ||
       !['premium', 'pro-plus', 'executive-pro'].includes(subscriptionData.subscription_tier));
+
+  // Helper for the click handler to open upgrade modal if locked
+  function handleLockedFeature(e: React.MouseEvent) {
+    e.preventDefault();
+    createCheckout('premium');
+  }
 
   return (
     <Sidebar className="border-r border-border">
@@ -107,14 +120,33 @@ export function AppSidebar() {
             <SidebarMenu>
               {navigationItems.map((item) => {
                 const Icon = item.icon;
+                const requiresPro = !!item.requiresPro;
+                const proLocked = requiresPro && !isProUser(subscriptionData.subscription_tier);
+
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                      <Link to={item.url} className="sidebar-nav-item">
-                        <Icon className="h-5 w-5" />
-                        <span className="font-medium">{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    {proLocked ? (
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive(item.url)}
+                        className="opacity-50 cursor-not-allowed pointer-events-auto"
+                        onClick={handleLockedFeature}
+                        tooltip="Requires Pro"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-5 w-5" />
+                          <span className="font-medium">{item.title}</span>
+                          <Lock className="h-4 w-4 ml-auto text-muted-foreground" />
+                        </div>
+                      </SidebarMenuButton>
+                    ) : (
+                      <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                        <Link to={item.url} className="sidebar-nav-item">
+                          <Icon className="h-5 w-5" />
+                          <span className="font-medium">{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
                   </SidebarMenuItem>
                 );
               })}
