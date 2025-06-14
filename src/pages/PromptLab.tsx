@@ -12,6 +12,7 @@ import {
   Briefcase, Megaphone, BookOpen, Globe, Target, DollarSign,
   BarChart3, Smartphone, Heart, Star, Crown
 } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 const PromptLab = () => {
   const { loading } = useAuth();
