@@ -1,9 +1,9 @@
-
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Send } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 // Update with your project ref from the environment:
 const SUPABASE_PROJECT_REF = "nxxhmfimzgxyemoldnqb";
@@ -37,6 +37,10 @@ export default function Coach() {
   const [loading, setLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // 👇 Get the current user's access token
+  const { session } = useAuth();
+  const accessToken = session?.access_token || "";
+
   async function sendMessage(e?: React.FormEvent) {
     if (e) e.preventDefault();
     if (!input.trim() || loading) return;
@@ -48,7 +52,10 @@ export default function Coach() {
     try {
       const res = await fetch(PROMPT_COACH_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        },
         body: JSON.stringify({
           messages: [
             ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -57,7 +64,6 @@ export default function Coach() {
         }),
       });
       if (!res.ok) {
-        // Give a clearer error for HTTP errors
         const text = await res.text();
         throw new Error(`Server error: ${res.status} ${text}`);
       }
