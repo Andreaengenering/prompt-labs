@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { CheckCircle, AlertCircle, Plus } from 'lucide-react';
 import { Platform } from '@/types/integrations';
+import { useYouTubeOAuth } from "@/hooks/useYouTubeOAuth";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PlatformCardProps {
   platform: Platform;
@@ -15,6 +17,9 @@ interface PlatformCardProps {
 }
 
 export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }: PlatformCardProps) {
+  const { user } = useAuth();
+  const { startOAuth } = useYouTubeOAuth();
+
   const getInputPlaceholder = () => {
     switch (platform.id) {
       case 'website':
@@ -23,6 +28,17 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
         return 'Enter your TikTok username';
       default:
         return `Enter your ${platform.name} handle`;
+    }
+  };
+
+  // Handles connection separately for supported OAuth platforms
+  const handleConnectClick = async () => {
+    if (platform.id === "youtube") {
+      // Start Google OAuth
+      await startOAuth();
+      // Don't immediately call onConnect; will detect connection after OAuth flow
+    } else {
+      onConnect(platform.id);
     }
   };
 
@@ -91,7 +107,7 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
             )}
             <Button 
               className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
-              onClick={() => onConnect(platform.id)}
+              onClick={handleConnectClick}
               disabled={platform.premium}
             >
               <Plus className="h-4 w-4 mr-2" />

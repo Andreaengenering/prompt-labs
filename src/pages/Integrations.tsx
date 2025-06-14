@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { AppLayout } from '@/components/AppLayout';
 import { StatsOverview } from '@/components/integrations/StatsOverview';
@@ -8,10 +7,62 @@ import { ContentAnalysis } from '@/components/integrations/ContentAnalysis';
 import { KnowledgeBase } from '@/components/integrations/KnowledgeBase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { platforms } from '@/constants/platforms';
+import { supabase } from "@/integrations/supabase/client";
 
 const Integrations = () => {
   const { user, loading } = useAuth();
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user) {
+      setConnectedPlatforms([]);
+      setAccounts([]);
+      return;
+    }
+
+    async function fetchAccounts() {
+      const { data, error } = await supabase
+        .from("social_accounts")
+        .select("*")
+        .eq("user_id", user.id);
+      if (!error) {
+        setAccounts(data || []);
+        setConnectedPlatforms((data || []).map((acc: any) => acc.platform));
+      } else {
+        setAccounts([]);
+      }
+    }
+    fetchAccounts();
+  }, [user]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const oauthParam = url.searchParams.get("oauth");
+    if (
+      oauthParam === "google" && user &&
+      !connectedPlatforms.includes("youtube")
+    ) {
+      async function saveYouTubeConnection() {
+        await supabase.from("social_accounts").insert({
+          user_id: user.id,
+          platform: "youtube",
+          account_username: user.email,
+          access_token: null // Could fetch or use session if you want, left null for demo
+        });
+        const { data } = await supabase
+          .from("social_accounts")
+          .select("*")
+          .eq("user_id", user.id);
+        setAccounts(data || []);
+        setConnectedPlatforms((data || []).map((acc: any) => acc.platform));
+      }
+      saveYouTubeConnection();
+
+      url.searchParams.delete("oauth");
+      window.history.replaceState({}, document.title, url.pathname);
+    }
+  }, [user, connectedPlatforms]);
 
   if (loading) {
     return (
@@ -33,8 +84,18 @@ const Integrations = () => {
     }
   };
 
-  const handleDisconnect = (platformId: string) => {
-    setConnectedPlatforms(connectedPlatforms.filter(id => id !== platformId));
+  const handleDisconnect = async (platformId: string) => {
+    if (user) {
+      await supabase
+        .from("social_accounts")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("platform", platformId);
+      setConnectedPlatforms(connectedPlatforms.filter((id) => id !== platformId));
+      setAccounts(accounts.filter((acc) => acc.platform !== platformId));
+    } else {
+      setConnectedPlatforms(connectedPlatforms.filter(id => id !== platformId));
+    }
   };
 
   const isConnected = (platformId: string) => connectedPlatforms.includes(platformId);
