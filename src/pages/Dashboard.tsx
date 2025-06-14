@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,10 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, FileText, Zap, TrendingUp, Heart, Globe, Eye, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from 'sonner';
+import CreateTemplateDialog from "@/components/templates/CreateTemplateDialog";
 
 // Cosmetic improvements: card UI, contrast, spacing, polish
 const Dashboard = () => {
   const { user } = useAuth();
+  const [dialogOpen, setDialogOpen] = useState(false);
   
   const { data: prompts = [], error } = useQuery({
     queryKey: ['user-prompts', user?.id],
@@ -115,12 +116,13 @@ const Dashboard = () => {
                 Recent prompt masterpieces
               </CardDescription>
             </div>
-            <Link to="/prompt-lab">
-              <Button className="bg-gradient-to-r from-red-600 to-yellow-500 hover:from-red-700 hover:to-yellow-600 transition-shadow shadow-md">
-                <Plus className="h-4 w-4 mr-2" />
-                Create New
-              </Button>
-            </Link>
+            <Button
+              className="bg-gradient-to-r from-red-600 to-yellow-500 hover:from-red-700 hover:to-yellow-600 transition-shadow shadow-md"
+              onClick={() => setDialogOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create New
+            </Button>
           </CardHeader>
           <CardContent>
             {prompts.length > 0 ? (
@@ -187,6 +189,8 @@ const Dashboard = () => {
             )}
           </CardContent>
         </Card>
+        {/* CreateTemplateDialog Modal */}
+        <CreateTemplateDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
       </div>
     </div>
   );

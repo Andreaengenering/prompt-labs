@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,11 +5,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { TemplateSearch } from '@/components/templates/TemplateSearch';
 import { CategoryTabs } from '@/components/templates/CategoryTabs';
 import { toast } from 'sonner';
+import BlankTemplateCard from "@/components/templates/BlankTemplateCard";
+import CreateTemplateDialog from "@/components/templates/CreateTemplateDialog";
 
 const Templates = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: categories = [], error: categoriesError } = useQuery({
     queryKey: ['template-categories'],
@@ -107,6 +109,9 @@ const Templates = () => {
           onCategoryChange={setSelectedCategory}
           templates={templates}
         />
+
+        {/* Blank Template Dialog */}
+        <CreateTemplateDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
       </div>
     </div>
   );
