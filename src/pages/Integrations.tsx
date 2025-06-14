@@ -78,19 +78,17 @@ const Integrations = () => {
     return null;
   }
 
-  // Enhanced connect for all platforms
+  // Centralized "connect" handler, for all platforms
   const handleConnect = async (platformId: string, accountUsername?: string) => {
     if (!user) return;
-
-    // Don't add duplicate
+    // Prevent duplicate
     if (connectedPlatforms.includes(platformId)) return;
-
-    // Insert new social account
+    // Insert record to Supabase for connection
     await supabase.from("social_accounts").insert({
       user_id: user.id,
       platform: platformId,
       account_username: accountUsername || user.email,
-      access_token: null // For OAuth later, if implemented
+      access_token: null,
     });
     const { data } = await supabase
       .from("social_accounts")

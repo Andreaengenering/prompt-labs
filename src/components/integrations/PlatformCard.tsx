@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,24 +23,14 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
   const { user } = useAuth();
   const { subscriptionData, createCheckout } = useSubscription();
   const { startOAuth } = useYouTubeOAuth();
-  const isProUser = subscriptionData.subscription_tier === 'premium'
-    || subscriptionData.subscription_tier === 'pro-plus'
-    || subscriptionData.subscription_tier === 'executive-pro';
+  const isProUser =
+    subscriptionData.subscription_tier === "premium" ||
+    subscriptionData.subscription_tier === "pro-plus" ||
+    subscriptionData.subscription_tier === "executive-pro";
 
   const [inputValue, setInputValue] = useState('');
 
-  const getInputPlaceholder = () => {
-    switch (platform.id) {
-      case 'website':
-        return 'Enter your website URL';
-      case 'tiktok':
-        return 'Enter your TikTok username';
-      default:
-        return `Enter your ${platform.name} handle`;
-    }
-  };
-
-  // Helper: Tells if this is a real OAuth connect
+  // ---- Helper: true if this platform requires OAuth connection ----
   const isOAuthPlatform = (pid: string) => {
     return (
       pid === "youtube" ||
@@ -53,36 +42,70 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
     );
   };
 
-  // Handles connect click - restrict for non-premium users
+  // ---- Connect handler for all social integrations ----
   const handleConnectClick = async () => {
     if (!isProUser) {
-      // Show upgrade modal
       toast.info("Upgrade to Pro to connect this platform!");
       createCheckout("premium");
       return;
     }
 
+    // ---- Real Google/YouTube OAuth ----
     if (platform.id === "youtube") {
       await startOAuth();
-      // Actual connect will happen after OAuth (handled in Integrations.tsx)
+      // Connections handled after OAuth redirect
       return;
     }
 
-    // For other OAuth social channels, we'll just "mock" that the user started an OAuth
-    // Real implementation would require separate OAuth provider setups and secure backend flows
-    if (isOAuthPlatform(platform.id)) {
-      // Call onConnect with account username if input available
-      onConnect(platform.id, inputValue || user?.email || "");
+    // ---- Mock "OAuth" for TikTok, Facebook, Instagram, Twitter ----
+    if (
+      platform.id === "tiktok" ||
+      platform.id === "facebook" ||
+      platform.id === "instagram" ||
+      platform.id === "linkedin" ||
+      platform.id === "twitter"
+    ) {
+      // If manual entry (TikTok username), use input
+      const username = inputValue || user?.email || "";
+      if ((platform.id === "tiktok" || platform.id === "facebook" || platform.id === "instagram" || platform.id === "twitter" || platform.id === "linkedin") && !username) {
+        toast.warning(`Please enter your ${platform.name} username/handle.`);
+        return;
+      }
+      // Store in Supabase (simulate connection)
+      onConnect(platform.id, username);
       toast.success(`${platform.name} connected!`);
       return;
     }
 
-    // Website manual entry
-    if (platform.id === "website" && inputValue) {
+    // ---- Website/manual entry ----
+    if (platform.id === "website") {
+      if (!inputValue) {
+        toast.warning("Please enter your website URL.");
+        return;
+      }
       onConnect(platform.id, inputValue);
       toast.success("Website connected!");
-    } else if (platform.id === "website") {
-      toast.warning("Please enter your website URL.");
+      return;
+    }
+  };
+
+  // Platform-specific placeholder text
+  const getInputPlaceholder = () => {
+    switch (platform.id) {
+      case "website":
+        return "Enter your website URL";
+      case "tiktok":
+        return "Enter your TikTok username";
+      case "facebook":
+        return "Enter your Facebook username/page";
+      case "instagram":
+        return "Enter your Instagram handle";
+      case "linkedin":
+        return "Enter your LinkedIn username/handle";
+      case "twitter":
+        return "Enter your Twitter/X handle";
+      default:
+        return `Enter your ${platform.name} handle`;
     }
   };
 
@@ -143,13 +166,18 @@ export function PlatformCard({ platform, isConnected, onConnect, onDisconnect }:
           </div>
         ) : (
           <div className="space-y-4">
-            {(platform.id === 'website' || platform.id === 'tiktok' || platform.id === 'facebook' || platform.id === 'instagram' || platform.id === 'linkedin' || platform.id === 'twitter') && (
-              <Input 
-                placeholder={getInputPlaceholder()} 
+            {(platform.id === "website" ||
+              platform.id === "tiktok" ||
+              platform.id === "facebook" ||
+              platform.id === "instagram" ||
+              platform.id === "linkedin" ||
+              platform.id === "twitter") && (
+              <Input
+                placeholder={getInputPlaceholder()}
                 className="bg-card border-border"
                 value={inputValue}
                 disabled={!isProUser}
-                onChange={e => setInputValue(e.target.value)}
+                onChange={(e) => setInputValue(e.target.value)}
               />
             )}
             <Button
