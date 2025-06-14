@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -59,6 +58,12 @@ const navigationItems = [
     url: '/feedback',
     icon: MessageCircle,
   },
+  // ADDED: Policies link
+  {
+    title: 'Policies',
+    url: '/policy',
+    icon: BookText,
+  },
 ];
 
 export function AppSidebar() {
@@ -116,4 +121,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-

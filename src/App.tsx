@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import Academy from "./pages/Academy";
 import Coach from "./pages/Coach";
 import FeedbackPage from "./pages/Feedback";
+import PolicyPage from "./pages/Policy";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -115,6 +116,10 @@ const App = () => (
                 }
               />
               <Route path="/academy" element={<Academy />} />
+              <Route
+                path="/policy"
+                element={<PolicyPage />} // new Policy page route
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
