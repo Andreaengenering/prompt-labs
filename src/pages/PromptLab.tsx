@@ -13,6 +13,8 @@ import {
   BarChart3, Smartphone, Heart, Star, Crown
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import TemplateCard from '@/components/prompt-lab/TemplateCard';
+import CustomPromptCard from '@/components/prompt-lab/CustomPromptCard';
 
 const PromptLab = () => {
   const { loading } = useAuth();
@@ -326,137 +328,6 @@ const PromptLab = () => {
     }
   };
 
-  const TemplateCard = ({ template }: { template: any }) => {
-    const category = templateCategories.find(cat => cat.id === template.category);
-    const IconComponent = category?.icon || BookOpen;
-    
-    return (
-      <Card className="gallery-card h-full flex flex-col">
-        <CardHeader className="pb-3 flex-shrink-0">
-          <div className="flex items-start justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 rounded-lg bg-red-600/20">
-                <IconComponent className="h-5 w-5 text-red-400" />
-              </div>
-              <Badge variant="outline" className="text-xs border-red-600/30">
-                {template.difficulty}
-              </Badge>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Star className="h-4 w-4 fill-red-400 text-red-400" />
-              <span className="text-sm text-muted-foreground">{template.rating}</span>
-            </div>
-          </div>
-          
-          <CardTitle className="text-lg mb-2 line-clamp-2 text-foreground">{template.title}</CardTitle>
-          <CardDescription className="text-sm line-clamp-2">
-            {template.description}
-          </CardDescription>
-          
-          <div className="flex items-center space-x-3 pt-2">
-            <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-              <Zap className="h-4 w-4" />
-              <span>{template.usage} uses</span>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="flex-1 flex flex-col">
-          <div className="bg-card/50 rounded-lg p-3 mb-4 flex-1 border border-border">
-            <p className="text-sm font-mono text-muted-foreground line-clamp-4">
-              {template.prompt}
-            </p>
-          </div>
-          
-          {template.tags && template.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-4">
-              {template.tags.slice(0, 3).map((tag: string) => (
-                <Badge key={tag} variant="outline" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
-              {template.tags.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{template.tags.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
-          
-          <div className="flex space-x-2 mt-auto">
-            <Button 
-              size="sm" 
-              className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
-              onClick={() => handleUseTemplate(template)}
-            >
-              <Copy className="h-4 w-4 mr-1" />
-              Use Template
-            </Button>
-            <Button size="sm" variant="outline" className="border-red-600/30 hover:bg-red-600/20">
-              <Heart className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const CustomPromptCard = ({ onCopy }: { onCopy?: (text: string) => void }) => {
-    const { toast } = useToast();
-    const [customPrompt, setCustomPrompt] = useState("");
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-    const handleCopy = async () => {
-      if (!customPrompt.trim()) {
-        toast({
-          variant: "destructive",
-          title: "Input required",
-          description: "Please enter a prompt before copying.",
-        });
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(customPrompt);
-        toast({
-          title: "Prompt copied!",
-          description: "Your custom prompt has been copied to clipboard.",
-        });
-        if (onCopy) onCopy(customPrompt);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Copy failed",
-          description: "Could not copy your prompt. Please try again.",
-        });
-      }
-    };
-    return (
-      <div className="border-2 border-dashed border-red-200 rounded-xl bg-white/50 shadow-sm p-4 flex flex-col min-h-[190px] justify-between">
-        <div>
-          <div className="font-semibold text-red-500 flex items-center mb-2">
-            <Copy className="h-4 w-4 mr-2" />
-            Custom Prompt
-          </div>
-          <Textarea
-            ref={textareaRef}
-            className="resize-none text-sm bg-white/80 border-red-200 focus:border-red-400 min-h-[90px] mb-2"
-            placeholder="Write or paste your own custom prompt here..."
-            value={customPrompt}
-            onChange={e => setCustomPrompt(e.target.value)}
-            maxLength={800}
-          />
-        </div>
-        <button
-          onClick={handleCopy}
-          className="mt-2 bg-gradient-to-r from-red-600 to-red-400 text-white px-3 py-1.5 rounded-md font-medium hover:from-red-500 hover:to-red-500 transition"
-        >
-          <Copy className="h-4 w-4 mr-1 inline-block align-middle" />
-          Copy Prompt
-        </button>
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-8">
@@ -533,7 +404,12 @@ const PromptLab = () => {
                   <CustomPromptCard />
                 )}
                 {filteredTemplates.map((template) => (
-                  <TemplateCard key={template.id} template={template} />
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    templateCategories={templateCategories}
+                    onUseTemplate={handleUseTemplate}
+                  />
                 ))}
               </div>
             )}
