@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Zap, LayoutDashboard, Bot, BookOpen, BarChart3, Globe,
-  User, Settings, HelpCircle, LogOut, Plus
+  User, Settings, HelpCircle, LogOut, Plus, Crown
 } from 'lucide-react';
 
 const navigationItems = [
@@ -58,8 +59,16 @@ const navigationItems = [
 export function AppSidebar() {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const { subscriptionData, createCheckout, loading } = useSubscription();
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Show upgrade button only if NOT already on a paid plan
+  const shouldShowUpgrade =
+    user &&
+    (!subscriptionData.subscribed ||
+      subscriptionData.subscription_tier === 'free' ||
+      !['premium', 'pro-plus', 'executive-pro'].includes(subscriptionData.subscription_tier));
 
   return (
     <Sidebar className="border-r border-border">
@@ -98,6 +107,21 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Upgrade to Pro Button */}
+        {shouldShowUpgrade && (
+          <div className="mt-6">
+            <Button
+              className="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white font-bold shadow-lg flex items-center gap-2"
+              onClick={() => createCheckout('premium')}
+              disabled={loading}
+            >
+              <Crown className="h-5 w-5 text-yellow-100 mr-2 drop-shadow" />
+              Upgrade to Pro
+            </Button>
+          </div>
+        )}
+
+        {/* The existing New Prompt button */}
         <div className="mt-6">
           <Link to="/prompt-lab">
             <Button className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white">
@@ -122,7 +146,13 @@ export function AppSidebar() {
                   </Avatar>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-medium truncate">{user.email}</p>
-                    <p className="text-xs text-muted-foreground">Free Plan</p>
+                    <p className="text-xs text-muted-foreground">
+                      {subscriptionData.subscription_tier
+                        ? subscriptionData.subscription_tier === 'free'
+                          ? 'Free Plan'
+                          : `${subscriptionData.subscription_tier.charAt(0).toUpperCase() + subscriptionData.subscription_tier.slice(1)}`
+                        : 'Free Plan'}
+                    </p>
                   </div>
                 </div>
               </Button>
@@ -152,3 +182,4 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
