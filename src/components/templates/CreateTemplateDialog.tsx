@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClipboardPaste, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CreateTemplateDialogProps {
   open: boolean;
@@ -37,6 +38,12 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Helper: Get the current session's JWT token
+  const getAccessToken = async (): Promise<string | null> => {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token || null;
+  };
 
   const handlePaste = async () => {
     try {
@@ -70,17 +77,26 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
     setLoading(true);
     setResult(null);
     try {
+      // Get JWT token
+      const access_token = await getAccessToken();
+      if (!access_token) {
+        toast({
+          variant: "destructive",
+          title: "You must be signed in",
+          description: "Please sign in to generate prompts.",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Call the Supabase Edge Function 'prompt-coach-chat'
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL || "https://nxxhmfimzgxyemoldnqb.supabase.co"}/functions/v1/prompt-coach-chat`,
+        "https://nxxhmfimzgxyemoldnqb.supabase.co/functions/v1/prompt-coach-chat",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Optionally pass Supabase JWT for protected edge function
-            ...(window.localStorage.getItem("sb-access-token")
-              ? { Authorization: `Bearer ${window.localStorage.getItem("sb-access-token")}` }
-              : {}),
+            Authorization: `Bearer ${access_token}`,
           },
           body: JSON.stringify({
             messages: [
@@ -188,3 +204,4 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
 };
 
 export default CreateTemplateDialog;
+
