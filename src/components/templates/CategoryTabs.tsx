@@ -39,16 +39,23 @@ export const CategoryTabs = ({ categories, selectedCategory, onCategoryChange, t
     <>
       {/* Menubar for categories */}
       <div className="mb-6 flex justify-center">
-        <Menubar className="gap-4 bg-background border border-border/50 rounded-lg shadow">
+        <Menubar className="gap-4 bg-background border border-red-800 rounded-lg shadow-lg">
           {MENU_CATEGORIES.map(cat => (
             <MenubarMenu key={cat.value}>
               <MenubarTrigger
                 onClick={() => onCategoryChange(cat.value)}
-                className={`px-5 py-2 font-semibold text-base transition-colors ${
-                  selectedCategory === cat.value
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
-                    : "text-foreground hover:bg-accent/60"
-                }`}
+                className={`
+                  px-6 py-2 font-semibold text-base rounded-md transition-colors
+                  ${
+                    selectedCategory === cat.value
+                      ? "bg-gradient-to-r from-red-600 to-red-400 text-white shadow-md"
+                      : "bg-black text-gray-200 hover:bg-red-800 hover:text-white"
+                  }
+                  border border-transparent hover:border-red-700
+                `}
+                style={{
+                  letterSpacing: '0.01em',
+                }}
               >
                 {cat.label}
               </MenubarTrigger>
