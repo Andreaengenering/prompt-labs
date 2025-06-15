@@ -37,10 +37,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-red-950 to-black">
-      {/* Page Label */}
-      <div className="w-full bg-yellow-100 text-yellow-900 text-center py-2 text-sm font-semibold z-50 relative">
-        <span>Landing Page</span>
-      </div>
       {/* Navigation */}
       <nav className="border-b border-red-900/20 bg-black/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
