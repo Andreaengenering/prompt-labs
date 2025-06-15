@@ -79,11 +79,11 @@ const Templates = () => {
   }, [categoriesError, templatesError]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-card pb-16">
-      <div className="container mx-auto max-w-6xl px-2 sm:px-8 py-12">
+    <div className="min-h-screen bg-black bg-gradient-to-br from-black via-background to-card pb-16">
+      <div className="container mx-auto max-w-6xl px-2 sm:px-8 py-10">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
+        <div className="mb-10 flex flex-col items-center">
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-red-600 via-red-400 to-red-300 bg-clip-text text-transparent drop-shadow-lg">
             Prompt Templates
           </h1>
           <p className="text-muted-foreground mt-3 text-lg sm:text-xl font-medium">
@@ -91,20 +91,22 @@ const Templates = () => {
           </p>
           {user && (
             <p className="text-xs text-muted-foreground mt-1">
-              Secure access for {user.email}
+              Secure access for <span className="text-red-400 font-semibold">{user.email}</span>
             </p>
           )}
         </div>
 
         {/* Search */}
         <div className="mb-8 flex items-center justify-center">
-          <TemplateSearch 
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-          />
+          <div className="w-full sm:w-3/5">
+            <TemplateSearch 
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+            />
+          </div>
         </div>
 
-        <div className="rounded-2xl shadow-xl bg-card/80 border border-border px-2 py-6 sm:px-6">
+        <div className="rounded-2xl shadow-2xl bg-background/90 border border-red-900 px-2 py-8 sm:px-6">
           <CategoryTabs 
             categories={categories}
             selectedCategory={selectedCategory}
