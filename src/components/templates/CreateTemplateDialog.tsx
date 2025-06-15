@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClipboardPaste, Sparkles } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface CreateTemplateDialogProps {
   open: boolean;
@@ -33,7 +34,8 @@ e.g. "Tone: playful, Up to 30 words, mention the word 'blooming'."
 export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProps) => {
   const [text, setText] = useState("");
   const [mode, setMode] = useState<"blank" | "paste">("blank");
-  
+  const { toast } = useToast();
+
   const handlePaste = async () => {
     try {
       const clipboardText = await navigator.clipboard.readText();
@@ -47,6 +49,23 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
   const handleExample = () => {
     setText(BLANK_TEMPLATE_HINT);
     setMode("blank");
+  };
+
+  const handleGenerate = () => {
+    if (!text.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Cannot generate prompt",
+        description: "Please enter or paste a prompt before generating.",
+      });
+      return;
+    }
+    // For now, just simulate a generate action with a toast.
+    toast({
+      title: "Prompt ready!",
+      description: "Your prompt is ready for further use or customization.",
+    });
+    // You may want to add a callback or API call here for actual generation logic.
   };
 
   return (
@@ -95,7 +114,14 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
         />
         <DialogFooter>
           <Button variant="secondary" type="button" onClick={onClose}>Close</Button>
-          {/* Add save or create logic here in future */}
+          <Button
+            type="button"
+            variant="default"
+            onClick={handleGenerate}
+            disabled={text.trim().length === 0}
+          >
+            Generate
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -103,3 +129,4 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
 };
 
 export default CreateTemplateDialog;
+
