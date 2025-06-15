@@ -1,4 +1,3 @@
-
 // Deno Deploy Edge Function
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -17,7 +16,7 @@ serve(async (req) => {
   try {
     const { messages } = await req.json();
     const promptCoachSystem = 
-      "You are an expert AI coach for prompt engineering. Your mission is to help users learn to write more effective prompts for AI (ChatGPT, Lovable, etc.). Guide users with practical tips, structure, feedback, and examples. Use educational feedback and never give generic answers.";
+      "You are an expert AI coach for prompt engineering. Your mission is to help users learn to write more effective prompts for AI (ChatGPT, Lovable, etc.). Guide users with practical tips, structure, feedback, and examples. Use educational feedback and never give generic answers. IMPORTANT: Please keep your suggestions short and concise, focusing only on what is most helpful.";
 
     const chatMessages = [
       { role: "system", content: promptCoachSystem },
@@ -34,7 +33,7 @@ serve(async (req) => {
         model: "gpt-4o-mini",
         messages: chatMessages,
         temperature: 0.4,
-        max_tokens: 600,
+        max_tokens: 200, // Reduced from 600 to 200 for brevity
       }),
     });
 
