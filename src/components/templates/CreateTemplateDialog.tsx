@@ -34,6 +34,8 @@ e.g. "Tone: playful, Up to 30 words, mention the word 'blooming'."
 export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProps) => {
   const [text, setText] = useState("");
   const [mode, setMode] = useState<"blank" | "paste">("blank");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handlePaste = async () => {
@@ -42,16 +44,21 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
       setText(clipboardText);
       setMode("paste");
     } catch {
-      // fallback or toast could be added
+      toast({
+        variant: "destructive",
+        title: "Failed to read clipboard",
+        description: "Clipboard access is not available.",
+      });
     }
   };
 
   const handleExample = () => {
     setText(BLANK_TEMPLATE_HINT);
     setMode("blank");
+    setResult(null);
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!text.trim()) {
       toast({
         variant: "destructive",
@@ -60,12 +67,50 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
       });
       return;
     }
-    // For now, just simulate a generate action with a toast.
-    toast({
-      title: "Prompt ready!",
-      description: "Your prompt is ready for further use or customization.",
-    });
-    // You may want to add a callback or API call here for actual generation logic.
+    setLoading(true);
+    setResult(null);
+    try {
+      // Call the Supabase Edge Function 'prompt-coach-chat'
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL || "https://nxxhmfimzgxyemoldnqb.supabase.co"}/functions/v1/prompt-coach-chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Optionally pass Supabase JWT for protected edge function
+            ...(window.localStorage.getItem("sb-access-token")
+              ? { Authorization: `Bearer ${window.localStorage.getItem("sb-access-token")}` }
+              : {}),
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: "user", content: text }
+            ]
+          }),
+        }
+      );
+      const data = await res.json();
+
+      if (!res.ok || !data?.message) {
+        toast({
+          variant: "destructive",
+          title: "Generation failed",
+          description: typeof data?.error === "string" ? data.error : "An error occurred while generating your prompt.",
+        });
+        setResult(null);
+      } else {
+        setResult(data.message);
+      }
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err?.message || "Could not connect to the prompt generator.",
+      });
+      setResult(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -118,15 +163,28 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
             type="button"
             variant="default"
             onClick={handleGenerate}
-            disabled={text.trim().length === 0}
+            disabled={loading || text.trim().length === 0}
           >
-            Generate
+            {loading ? (
+              <>
+                <span className="animate-spin mr-2 w-4 h-4 border-2 border-grey-500 border-t-2 border-t-primary rounded-full"></span>
+                Generating...
+              </>
+            ) : (
+              "Generate"
+            )}
           </Button>
         </DialogFooter>
+        {/* Show result */}
+        {result && (
+          <div className="mt-6 border rounded-lg bg-muted/60 border-border p-4">
+            <div className="text-sm font-bold mb-1 text-foreground">AI Coach Suggestion</div>
+            <div className="whitespace-pre-line text-base font-mono text-accent-foreground">{result}</div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
 };
 
 export default CreateTemplateDialog;
-
