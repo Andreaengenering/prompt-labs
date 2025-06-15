@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Dialog,
@@ -195,7 +194,9 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
         {result && (
           <div className="mt-6 border rounded-lg bg-muted/60 border-border p-4">
             <div className="text-sm font-bold mb-1 text-foreground">AI Coach Suggestion</div>
-            <div className="whitespace-pre-line text-base font-mono text-accent-foreground">{result}</div>
+            <div className="whitespace-pre-line text-base font-mono text-accent-foreground max-h-56 overflow-auto">
+              {result}
+            </div>
           </div>
         )}
       </DialogContent>
@@ -204,4 +205,3 @@ export const CreateTemplateDialog = ({ open, onClose }: CreateTemplateDialogProp
 };
 
 export default CreateTemplateDialog;
-
