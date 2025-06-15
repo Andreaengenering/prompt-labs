@@ -101,10 +101,12 @@ const Landing = () => {
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-red-600/30 text-red-400 hover:bg-red-600/10 text-lg px-8">
-              <Target className="h-5 w-5 mr-2" />
-              View Templates
-            </Button>
+            <Link to="/templates">
+              <Button size="lg" variant="outline" className="border-red-600/30 text-red-400 hover:bg-red-600/10 text-lg px-8">
+                <Target className="h-5 w-5 mr-2" />
+                View Templates
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
